@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "skills": {
+    "clerk": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk/SKILL.md",
+      "computedHash": "c5f37de2849cf786ecb594f3cf62e94cf7c5f5367d2e8174e2b3a7dd852d1225"
+    },
+    "clerk-backend-api": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-backend-api/SKILL.md",
+      "computedHash": "f546f7a163670ff580271573e52e01f2a539fcbd6b3b2d6dd714656f60ee1a65"
+    },
+    "clerk-cli": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-cli/SKILL.md",
+      "computedHash": "ca9d8a60b1f239d0b87ed7b3fc1d182a0d3a239189c58715c702e7a33ee69184"
+    },
+    "clerk-custom-ui": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-custom-ui/SKILL.md",
+      "computedHash": "ab1a18230efbd7f182731ac01cb8b7b84b05d5fe3bf5bc905d30e1af96633fc3"
+    },
+    "clerk-nextjs-patterns": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-nextjs-patterns/SKILL.md",
+      "computedHash": "208b936809f814fa0aa2a6e15b2e880b8b9fee5f0b3ca4fce9ac2f2ea7472418"
+    },
+    "clerk-setup": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-setup/SKILL.md",
+      "computedHash": "e842969c52014a6223207fc2330e0ef038fc2a1940b01c335ff5519846d13e41"
+    },
+    "content-experimentation-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/content-experimentation-best-practices/SKILL.md",
+      "computedHash": "a30fd36724201a7b1bed2589984a87dabb9e955e48ab39281fd3f9631d0e5d6c"
+    },
+    "content-modeling-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/content-modeling-best-practices/SKILL.md",
+      "computedHash": "7e2b080109bfc77dc16696da77dbe63786fe08f726e525b0704cf255fed49da9"
+    },
+    "create-agent-with-sanity-context": {
+      "source": "sanity-io/context",
+      "sourceType": "github",
+      "skillPath": "skills/create-agent-with-sanity-context/SKILL.md",
+      "computedHash": "63564a6c2393ba91062bc896afa266a2147b850e45e11959263de0b3fa22d287"
+    },
+    "dial-your-context": {
+      "source": "sanity-io/context",
+      "sourceType": "github",
+      "skillPath": "skills/dial-your-context/SKILL.md",
+      "computedHash": "04ff53eff9227bac193e5b8a3ff47d2b072c0ffb899cbb6d03d543372854df1e"
+    },
+    "portable-text-conversion": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/portable-text-conversion/SKILL.md",
+      "computedHash": "9e31a7851dcace0c3b085133711262e483385b95bd92866c3ba7ce43571d9b91"
+    },
+    "portable-text-serialization": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/portable-text-serialization/SKILL.md",
+      "computedHash": "96693a472132e56c6a3f472c240348249d3e513b7a8ffd0089a267574227598a"
+    },
+    "sanity-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/sanity-best-practices/SKILL.md",
+      "computedHash": "f5edaa07fe161345ec6dd4fca6604bdd7e89a8ef9694ef502eb6556e58ef72b1"
+    },
+    "sanity-form-component-suspense": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/sanity-form-component-suspense/SKILL.md",
+      "computedHash": "80620aa4ca0cb5f11ecfcd3323060f905847f7fe4c53314630dd7e92ba1d3186"
+    },
+    "sanity-migration": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/sanity-migration/SKILL.md",
+      "computedHash": "8eefb3651b0da4caab43d3414388fd5db8e92e11bd5b7dc09da0fefcf24d4ee7"
+    },
+    "sanity-singletons": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/sanity-singletons/SKILL.md",
+      "computedHash": "13775c7b2945fdf0351494dc13c7e3ea02097bd93a3e0092b1b8ab8bdbb872cc"
+    },
+    "sanity-studio-upgrade": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/sanity-studio-upgrade/SKILL.md",
+      "computedHash": "62e7a28ae3ce0a4ba03ab51f0e0596899b468c8e4dab4cf1e68ac7eee0db7907"
+    },
+    "seo-aeo-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/seo-aeo-best-practices/SKILL.md",
+      "computedHash": "b6b2dd3af3c92f82f04b830dab2cc323f299d7c2e57f7d3619a5886caa7eeb08"
+    },
+    "shape-your-agent": {
+      "source": "sanity-io/context",
+      "sourceType": "github",
+      "skillPath": "skills/shape-your-agent/SKILL.md",
+      "computedHash": "4e3b316bb57c939a6f298cef2dc65d2d0b196947ddfd32145a77b8adf84fc193"
+    }
+  }
+}
