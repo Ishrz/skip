@@ -5,16 +5,18 @@ import { cn } from "@/lib/cn";
 export function Navbar({
   links,
   active,
+  actions,
   className,
 }: {
   links: Array<{ label: string; href: string }>;
   active?: string;
+  actions?: React.ReactNode;
   className?: string;
 }) {
   return (
     <nav
       className={cn(
-        "flex items-center justify-between gap-6 border-b border-neutral-100 bg-white px-6 py-3",
+        "flex items-center justify-between gap-6 px-6 py-3",
         className,
       )}
     >
@@ -22,21 +24,35 @@ export function Navbar({
         <Logo />
       </Link>
       <div className="flex items-center gap-6">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "text-body font-medium transition-colors",
-              active === link.label
-                ? "text-primary-500"
-                : "text-neutral-700 hover:text-neutral-900",
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
+        {links.map((link) => {
+          const isActive = active === link.label;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "text-body relative flex items-center font-medium transition-colors",
+                isActive
+                  ? "text-primary-500"
+                  : "text-neutral-700 hover:text-neutral-900",
+              )}
+            >
+              {link.label}
+              {isActive ? (
+                <span
+                  aria-hidden="true"
+                  className="bg-primary-500 absolute -bottom-4 left-0 right-0 h-0.5 rounded-full"
+                />
+              ) : null}
+            </Link>
+          );
+        })}
       </div>
+      {actions ? (
+        <div className="flex items-center gap-4">{actions}</div>
+      ) : (
+        <div />
+      )}
     </nav>
   );
 }
