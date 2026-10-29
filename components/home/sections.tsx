@@ -1,8 +1,9 @@
+import { Suspense } from "react";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import {
   ArrowRight,
   BarChart3,
   Bell,
-  ChevronDown,
   Clock,
   FileText,
   Search,
@@ -37,16 +38,25 @@ export function HomeNavbar({ className }: { className?: string }) {
                 className="bg-primary-500 absolute top-0.5 right-0.5 size-2 rounded-full ring-2 ring-white"
               />
             </button>
-            <button
-              type="button"
-              aria-label="Account menu"
-              className="flex items-center gap-1.5 rounded-full focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none"
-            >
-              <span className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-primary-400 text-white">
-                <User className="size-4" />
-              </span>
-              <ChevronDown className="size-4 text-neutral-500" />
-            </button>
+            <Suspense>
+              <Show when="signed-out">
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="flex size-9 items-center justify-center rounded-full text-neutral-700 transition-colors hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none"
+                    aria-label="Sign in"
+                  >
+                    <User className="size-4" />
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button variant="primary" size="md">Sign Up</Button>
+                </SignUpButton>
+              </Show>
+              <Show when="signed-in">
+                <UserButton />
+              </Show>
+            </Suspense>
           </>
         }
       />
