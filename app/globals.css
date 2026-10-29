@@ -33,6 +33,13 @@
   --shadow-xl: 0 20px 40px -8px rgba(15, 23, 42, 0.12);
 }
 
+@utility text-hero {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.125;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
 @utility text-display-1 {
   font-size: 3rem;
   line-height: 3.5rem;
