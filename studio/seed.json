@@ -1,0 +1,277 @@
+[
+  {
+    "_id": "category-web-development",
+    "_type": "category",
+    "title": "Web Development",
+    "slug": { "_type": "slug", "current": "web-development" },
+    "description": "Full-stack engineering for the modern web: rendering, data, and the plumbing in between."
+  },
+  {
+    "_id": "instructor-maya-chen",
+    "_type": "instructor",
+    "name": "Maya Chen",
+    "slug": { "_type": "slug", "current": "maya-chen" },
+    "photo": {
+      "_type": "image",
+      "asset": {
+        "_type": "reference",
+        "_ref": "image-8b642632bf84a62b9e5188c3e7d2f50c9fabd317-600x600-png"
+      },
+      "alt": "Portrait of Maya Chen"
+    },
+    "expertise": ["React", "Next.js", "TypeScript", "Content modelling"],
+    "bio": [
+      {
+        "_type": "block",
+        "_key": "bio1",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "bio1s1",
+            "text": "Maya has spent a decade shipping product surfaces where the data model decides whether the interface stays fast. She teaches the parts that survive a rewrite.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "lesson-server-components",
+    "_type": "lesson",
+    "title": "Thinking in Server Components",
+    "slug": { "_type": "slug", "current": "thinking-in-server-components" },
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "poster": {
+      "_type": "image",
+      "asset": {
+        "_type": "reference",
+        "_ref": "image-771258de3e1c2525c0f9882d0b4a05d56f09c6d1-1200x675-png"
+      },
+      "alt": "Lesson poster"
+    },
+    "duration": 742,
+    "freePreview": true,
+    "studentCount": 3120,
+    "notes": [
+      {
+        "_type": "block",
+        "_key": "n1",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "n1s1",
+            "text": "A server component runs where the data lives. The browser never receives the query, only the markup it produced.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_type": "block",
+        "_key": "n2",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "n2s1",
+            "text": "Where the boundary sits",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_type": "block",
+        "_key": "n3",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "n3s1",
+            "text": "Push the boundary down until the smallest useful piece is interactive. Everything above it stays on the server.",
+            "marks": []
+          }
+        ]
+      }
+    ],
+    "keyPoints": [
+      "Split rendering by capability, not by file size",
+      "Keep secrets behind the server boundary",
+      "Stream the slow parts instead of blocking the whole page"
+    ],
+    "proTip": "If a component needs a token to render, it belongs on the server. There is no version of that which is safe in the browser.",
+    "resources": [
+      {
+        "_type": "resource",
+        "_key": "r1",
+        "type": "article",
+        "title": "Server Components reference",
+        "description": "The official guide to the rendering model.",
+        "url": "https://react.dev/reference/rsc/server-components"
+      }
+    ]
+  },
+  {
+    "_id": "lesson-data-fetching",
+    "_type": "lesson",
+    "title": "Fetching Data on the Server",
+    "slug": { "_type": "slug", "current": "fetching-data-on-the-server" },
+    "videoUrl": "https://vimeo.com/76979871",
+    "poster": {
+      "_type": "image",
+      "asset": {
+        "_type": "reference",
+        "_ref": "image-771258de3e1c2525c0f9882d0b4a05d56f09c6d1-1200x675-png"
+      },
+      "alt": "Lesson poster"
+    },
+    "duration": 1104,
+    "freePreview": false,
+    "studentCount": 2410,
+    "notes": [
+      {
+        "_type": "block",
+        "_key": "d1",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "d1s1",
+            "text": "Fetch next to the component that needs the data. Colocating removes the layer where stale shapes hide.",
+            "marks": []
+          }
+        ]
+      }
+    ],
+    "keyPoints": [
+      "Colocate a fetch with its component",
+      "Type the response at the boundary",
+      "Never let a token cross into client code"
+    ],
+    "resources": [
+      {
+        "_type": "resource",
+        "_key": "r1",
+        "type": "tool",
+        "title": "GROQ playground",
+        "description": "Try queries against the dataset.",
+        "url": "https://www.sanity.io/docs/groq"
+      }
+    ]
+  },
+  {
+    "_id": "lesson-caching",
+    "_type": "lesson",
+    "title": "Caching With Intent",
+    "slug": { "_type": "slug", "current": "caching-with-intent" },
+    "videoUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+    "poster": {
+      "_type": "image",
+      "asset": {
+        "_type": "reference",
+        "_ref": "image-771258de3e1c2525c0f9882d0b4a05d56f09c6d1-1200x675-png"
+      },
+      "alt": "Lesson poster"
+    },
+    "duration": 933,
+    "freePreview": false,
+    "studentCount": 1980,
+    "notes": [
+      {
+        "_type": "block",
+        "_key": "c1",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "c1s1",
+            "text": "A cache without a tag is a cache you cannot invalidate. Tag every request with the thing that would make it wrong.",
+            "marks": []
+          }
+        ]
+      }
+    ],
+    "keyPoints": [
+      "Tag by entity, not by page",
+      "Invalidate with the narrowest tag that works",
+      "Measure before adding a second cache"
+    ],
+    "proTip": "If you cannot name the event that should bust a cache entry, it probably should not be cached.",
+    "resources": []
+  },
+  {
+    "_id": "course-fullstack-app",
+    "_type": "course",
+    "title": "Build a Full-Stack App",
+    "slug": { "_type": "slug", "current": "build-a-full-stack-app" },
+    "summary": "Ship a production app end to end: server rendering, a typed content layer, and caching you can reason about.",
+    "coverImage": {
+      "_type": "image",
+      "asset": {
+        "_type": "reference",
+        "_ref": "image-771258de3e1c2525c0f9882d0b4a05d56f09c6d1-1200x675-png"
+      },
+      "alt": "Abstract course cover"
+    },
+    "level": "intermediate",
+    "price": 0,
+    "popular": true,
+    "studentCount": 1284,
+    "learningOutcomes": [
+      {
+        "_type": "learningOutcome",
+        "_key": "lo1",
+        "icon": "target",
+        "title": "Design the data model first",
+        "description": "Model content so the interface follows the data instead of fighting it."
+      },
+      {
+        "_type": "learningOutcome",
+        "_key": "lo2",
+        "icon": "play",
+        "title": "Render on the server",
+        "description": "Stream data without shipping queries or tokens to the browser."
+      },
+      {
+        "_type": "learningOutcome",
+        "_key": "lo3",
+        "icon": "clock",
+        "title": "Cache with intent",
+        "description": "Tag requests so you can invalidate only what actually changed."
+      }
+    ],
+    "instructor": { "_type": "reference", "_ref": "instructor-maya-chen" },
+    "category": { "_type": "reference", "_ref": "category-web-development" },
+    "modules": [
+      {
+        "_type": "module",
+        "_key": "m1",
+        "title": "Foundations",
+        "summary": "How the app fits together before any data moves.",
+        "lessons": [
+          {
+            "_type": "reference",
+            "_key": "m1l1",
+            "_ref": "lesson-server-components"
+          }
+        ]
+      },
+      {
+        "_type": "module",
+        "_key": "m2",
+        "title": "Data Fetching and Caching",
+        "summary": "Fetch on the server, then keep it fast and correct.",
+        "lessons": [
+          { "_type": "reference", "_key": "m2l1", "_ref": "lesson-data-fetching" },
+          { "_type": "reference", "_key": "m2l2", "_ref": "lesson-caching" }
+        ]
+      }
+    ]
+  }
+]

@@ -21,6 +21,11 @@ dev.log
 # production
 /build
 
+# standalone studio
+studio/node_modules
+studio/.sanity
+studio/dist
+
 # folders
 /prompts
 /design
@@ -37,6 +42,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!/.env.example
+!/studio/.env.example
 
 # vercel
 .vercel
