@@ -1,10 +1,20 @@
-import { createClient } from 'next-sanity'
+import 'server-only'
 
-import { apiVersion, dataset, projectId } from '../env'
+import {createClient} from 'next-sanity'
 
+import {apiVersion, dataset, projectId} from '../env'
+import {readToken} from './token'
+
+/**
+ * Server-only client for the private dataset.
+ * `server-only` guarantees this module never reaches the browser bundle.
+ */
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  token: readToken,
+  useCdn: true,
+  perspective: 'published',
+  stega: false,
 })
