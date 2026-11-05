@@ -1,4 +1,5 @@
 import {defineQuery} from 'next-sanity'
+import {cacheLife, cacheTag} from 'next/cache'
 
 import type {
   COURSE_BY_SLUG_QUERY_RESULT,
@@ -54,6 +55,9 @@ export const COURSE_BY_SLUG_QUERY = defineQuery(`
     price,
     popular,
     studentCount,
+    "moduleCount": count(modules),
+    "lessonCount": count(modules[].lessons[]),
+    "totalDuration": math::sum(modules[].lessons[]->duration),
     coverImage { ${imageProjection} },
     learningOutcomes[] {
       _key,
@@ -80,6 +84,8 @@ export const COURSE_BY_SLUG_QUERY = defineQuery(`
       _type,
       title,
       summary,
+      "lessonCount": count(lessons),
+      "totalDuration": math::sum(lessons[]->duration),
       "lessons": lessons[]->{
         _id,
         _type,
@@ -87,8 +93,7 @@ export const COURSE_BY_SLUG_QUERY = defineQuery(`
         "slug": slug.current,
         duration,
         freePreview,
-        studentCount,
-        poster { ${imageProjection} }
+        studentCount
       }
     }
   }
@@ -101,6 +106,10 @@ export const COURSE_SLUGS_QUERY = defineQuery(`
 `)
 
 export async function getCourseList() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('course')
+
   return sanityFetch<COURSE_LIST_QUERY_RESULT>({
     query: COURSE_LIST_QUERY,
     tags: ['course'],
@@ -108,6 +117,10 @@ export async function getCourseList() {
 }
 
 export async function getCourseBySlug(slug: string) {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('course', `course:${slug}`)
+
   return sanityFetch<COURSE_BY_SLUG_QUERY_RESULT>({
     query: COURSE_BY_SLUG_QUERY,
     params: {slug},

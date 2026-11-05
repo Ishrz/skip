@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import {
   ArrowRight,
@@ -10,9 +12,11 @@ import {
   Star,
   User,
 } from "lucide-react";
+import type { COURSE_LIST_QUERY_RESULT } from "@/sanity.types";
 import { Navbar } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { urlFor } from "@/sanity/lib/image";
+import { formatDuration, formatLevel } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 export function HomeNavbar({ className }: { className?: string }) {
@@ -64,130 +68,77 @@ export function HomeNavbar({ className }: { className?: string }) {
   );
 }
 
-function DockerMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <g fill="#2496ED">
-        <rect x="14.5" y="3.5" width="4.2" height="4.2" rx="0.6" />
-        <rect x="9.5" y="8.8" width="4.2" height="4.2" rx="0.6" />
-        <rect x="14.5" y="8.8" width="4.2" height="4.2" rx="0.6" />
-        <rect x="19.5" y="8.8" width="4.2" height="4.2" rx="0.6" />
-      </g>
-      <path
-        d="M3.5 21c1.6-3.4 5.2-5 9.4-5h10.6c2.5 0 4.8-1.3 6.1-3.1.3 2.5-1 4.6-2.9 5.8 2 .3 3.7 0 5.6-.8-1 3.1-3.8 5.6-8 5.6H6.6c-1.5 0-2.6-.8-3.1-2.5Z"
-        fill="#2496ED"
-      />
-    </svg>
-  );
-}
-
-const courseTile =
-  "flex size-16 items-center justify-center rounded-lg shadow-sm";
+type HomeCourse = COURSE_LIST_QUERY_RESULT[number];
 
 export function HomeCourseCard({
-  icon,
-  title,
-  description,
-  level,
-  duration,
-  modules,
-  href,
+  course,
   className,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  description?: string;
-  level?: string;
-  duration?: string;
-  modules?: string;
-  href?: string;
+  course: HomeCourse;
   className?: string;
 }) {
+  const title = course.title ?? "Untitled course";
+  const href = course.slug ? `/courses/${course.slug}` : "/courses";
+  const coverUrl =
+    course.coverImage?.asset !== undefined
+      ? urlFor(course.coverImage)
+          .width(160)
+          .height(160)
+          .fit("crop")
+          .url()
+      : null;
+
   return (
-    <Card
+    <Link
       href={href}
-      className={cn("flex flex-col p-5 hover:shadow-lg", className)}
+      className={cn(
+        "flex h-full flex-col rounded-md border border-neutral-100 bg-white p-5 shadow-sm transition-shadow duration-150 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-none",
+        className,
+      )}
     >
-      <div className="h-16">{icon}</div>
+      <div className="size-16 overflow-hidden rounded-lg shadow-sm">
+        {coverUrl ? (
+          <Image
+            src={coverUrl}
+            alt=""
+            width={64}
+            height={64}
+            unoptimized
+            className="size-full object-cover"
+          />
+        ) : (
+          <span className="flex size-full items-center justify-center bg-neutral-900 font-display text-3xl font-bold text-white">
+            {title.charAt(0)}
+          </span>
+        )}
+      </div>
       <h3 className="font-display mt-5 text-2xl leading-8 font-bold text-neutral-900">
         {title}
       </h3>
-      {description ? (
-        <p className="text-body mt-2 text-neutral-500">{description}</p>
+      {course.summary ? (
+        <p className="text-body mt-2 line-clamp-2 text-neutral-500">
+          {course.summary}
+        </p>
       ) : null}
-      <div className="border-neutral-100 mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-3 text-small text-neutral-500">
-        {level ? (
+      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-neutral-100 pt-3 text-small text-neutral-500">
+        {course.level ? (
           <span className="inline-flex items-center gap-1.5">
-            <BarChart3 className="size-4" />
-            {level}
+            <BarChart3 className="size-4" aria-hidden="true" />
+            {formatLevel(course.level)}
           </span>
         ) : null}
-        {duration ? (
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="size-4" />
-            {duration}
-          </span>
-        ) : null}
-        {modules ? (
-          <span className="inline-flex items-center gap-1.5">
-            <FileText className="size-4" />
-            {modules}
-          </span>
-        ) : null}
+        <span className="inline-flex items-center gap-1.5">
+          <Clock className="size-4" aria-hidden="true" />
+          {formatDuration(course.totalDuration)}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <FileText className="size-4" aria-hidden="true" />
+          {course.moduleCount ?? 0} modules
+        </span>
       </div>
-    </Card>
+    </Link>
   );
 }
-
-const courses = [
-  {
-    icon: (
-      <span className={cn(courseTile, "bg-neutral-900 text-white")}>
-        <span className="text-3xl font-bold tracking-tight">N</span>
-      </span>
-    ),
-    title: "Next.js for Production",
-    description: "Build scalable, high-performance web applications with Next.js.",
-    level: "Intermediate",
-    duration: "18h 24m",
-    modules: "12 modules",
-  },
-  {
-    icon: (
-      <span className={cn(courseTile, "bg-white")}>
-        <DockerMark className="size-12" />
-      </span>
-    ),
-    title: "Docker Essentials",
-    description:
-      "Containerize applications and streamline your development workflow.",
-    level: "Beginner",
-    duration: "10h 12m",
-    modules: "8 modules",
-  },
-  {
-    icon: (
-      <span
-        className={cn(
-          courseTile,
-          "bg-primary-500 text-white",
-        )}
-      >
-        <span className="text-2xl font-bold tracking-tight">TS</span>
-      </span>
-    ),
-    title: "TypeScript Deep Dive",
-    description: "Go beyond the basics and write safer, more expressive code.",
-    level: "Intermediate",
-    duration: "14h 36m",
-    modules: "10 modules",
-  },
-];
 
 export function Hero() {
   return (
@@ -224,7 +175,15 @@ export function Hero() {
   );
 }
 
-export function CoursesSection({ className }: { className?: string }) {
+export function CoursesSection({
+  courses,
+  className,
+}: {
+  courses: COURSE_LIST_QUERY_RESULT;
+  className?: string;
+}) {
+  const featured = courses.filter((course) => course.slug).slice(0, 3);
+
   return (
     <div className={cn("mx-4 pt-14 pb-16 sm:mx-6", className)}>
       <section className="mx-auto max-w-6xl rounded-xl border border-neutral-100 bg-white px-4 py-8 shadow-sm sm:px-8 sm:py-10">
@@ -232,19 +191,25 @@ export function CoursesSection({ className }: { className?: string }) {
           <h2 className="font-display text-3xl font-bold text-neutral-900">
             All Courses
           </h2>
-          <a
+          <Link
             href="/courses"
             className="text-body inline-flex items-center gap-1.5 font-medium text-primary-500 transition-colors hover:text-primary-400"
           >
             View all courses
             <ArrowRight className="size-4" />
-          </a>
+          </Link>
         </div>
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {courses.map((course) => (
-            <HomeCourseCard key={course.title} {...course} />
-          ))}
-        </div>
+        {featured.length > 0 ? (
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {featured.map((course) => (
+              <HomeCourseCard key={course._id} course={course} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-body mt-8 text-neutral-500">
+            No courses yet. Check back soon.
+          </p>
+        )}
         <div className="mt-12 flex items-center gap-6">
           <span aria-hidden="true" className="h-px flex-1 bg-neutral-200" />
           <span className="text-body inline-flex shrink-0 items-center gap-2.5 text-neutral-500">

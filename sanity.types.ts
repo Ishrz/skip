@@ -434,7 +434,7 @@ export type COURSE_LIST_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries/course.ts
 // Variable: COURSE_BY_SLUG_QUERY
-// Query: *[_type == "course" && slug.current == $slug][0] {    _id,    _type,    title,    "slug": slug.current,    summary,    level,    price,    popular,    studentCount,    coverImage {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },    learningOutcomes[] {      _key,      _type,      icon,      title,      description    },    "instructor": instructor->{      _id,      name,      "slug": slug.current,      expertise,      photo {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions }    },    "category": category->{      _id,      title,      "slug": slug.current,      description    },    modules[] {      _key,      _type,      title,      summary,      "lessons": lessons[]->{        _id,        _type,        title,        "slug": slug.current,        duration,        freePreview,        studentCount,        poster {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions }      }    }  }
+// Query: *[_type == "course" && slug.current == $slug][0] {    _id,    _type,    title,    "slug": slug.current,    summary,    level,    price,    popular,    studentCount,    "moduleCount": count(modules),    "lessonCount": count(modules[].lessons[]),    "totalDuration": math::sum(modules[].lessons[]->duration),    coverImage {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },    learningOutcomes[] {      _key,      _type,      icon,      title,      description    },    "instructor": instructor->{      _id,      name,      "slug": slug.current,      expertise,      photo {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions }    },    "category": category->{      _id,      title,      "slug": slug.current,      description    },    modules[] {      _key,      _type,      title,      summary,      "lessonCount": count(lessons),      "totalDuration": math::sum(lessons[]->duration),      "lessons": lessons[]->{        _id,        _type,        title,        "slug": slug.current,        duration,        freePreview,        studentCount      }    }  }
 export type COURSE_BY_SLUG_QUERY_RESULT = {
   _id: string;
   _type: "course";
@@ -445,6 +445,9 @@ export type COURSE_BY_SLUG_QUERY_RESULT = {
   price: number | null;
   popular: boolean | null;
   studentCount: number | null;
+  moduleCount: number | null;
+  lessonCount: number | null;
+  totalDuration: number | null;
   coverImage: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -490,6 +493,8 @@ export type COURSE_BY_SLUG_QUERY_RESULT = {
     _type: "module";
     title: string | null;
     summary: string | null;
+    lessonCount: number | null;
+    totalDuration: number | null;
     lessons: Array<{
       _id: string;
       _type: "lesson";
@@ -498,16 +503,6 @@ export type COURSE_BY_SLUG_QUERY_RESULT = {
       duration: number | null;
       freePreview: boolean | null;
       studentCount: number | null;
-      poster: {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        alt?: string;
-        _type: "image";
-        lqip: string | null;
-        dimensions: SanityImageDimensions | null;
-      } | null;
     }> | null;
   }> | null;
 } | null;
@@ -669,7 +664,7 @@ declare global {
     '\n  *[_type == "category" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    description,\n    "courses": *[_type == "course" && references(^._id)] | order(title asc) {\n      _id,\n      title,\n      "slug": slug.current,\n      summary,\n      level,\n      studentCount\n    }\n  }\n': CATEGORY_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "category" && defined(slug.current)] | order(title asc) {\n    "slug": slug.current\n  }\n': CATEGORY_SLUGS_QUERY_RESULT;
     '\n  *[_type == "course"] | order(popular desc, title asc) {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    summary,\n    level,\n    price,\n    popular,\n    studentCount,\n    coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    "instructor": instructor->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n    },\n    "category": category->{\n      _id,\n      title,\n      "slug": slug.current\n    },\n    "moduleCount": count(modules),\n    "lessonCount": count(modules[].lessons[]),\n    "totalDuration": math::sum(modules[].lessons[]->duration)\n  }\n': COURSE_LIST_QUERY_RESULT;
-    '\n  *[_type == "course" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    summary,\n    level,\n    price,\n    popular,\n    studentCount,\n    coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    learningOutcomes[] {\n      _key,\n      _type,\n      icon,\n      title,\n      description\n    },\n    "instructor": instructor->{\n      _id,\n      name,\n      "slug": slug.current,\n      expertise,\n      photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n    },\n    "category": category->{\n      _id,\n      title,\n      "slug": slug.current,\n      description\n    },\n    modules[] {\n      _key,\n      _type,\n      title,\n      summary,\n      "lessons": lessons[]->{\n        _id,\n        _type,\n        title,\n        "slug": slug.current,\n        duration,\n        freePreview,\n        studentCount,\n        poster { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n      }\n    }\n  }\n': COURSE_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "course" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    summary,\n    level,\n    price,\n    popular,\n    studentCount,\n    "moduleCount": count(modules),\n    "lessonCount": count(modules[].lessons[]),\n    "totalDuration": math::sum(modules[].lessons[]->duration),\n    coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    learningOutcomes[] {\n      _key,\n      _type,\n      icon,\n      title,\n      description\n    },\n    "instructor": instructor->{\n      _id,\n      name,\n      "slug": slug.current,\n      expertise,\n      photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n    },\n    "category": category->{\n      _id,\n      title,\n      "slug": slug.current,\n      description\n    },\n    modules[] {\n      _key,\n      _type,\n      title,\n      summary,\n      "lessonCount": count(lessons),\n      "totalDuration": math::sum(lessons[]->duration),\n      "lessons": lessons[]->{\n        _id,\n        _type,\n        title,\n        "slug": slug.current,\n        duration,\n        freePreview,\n        studentCount\n      }\n    }\n  }\n': COURSE_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "course" && defined(slug.current)] | order(title asc) {\n    "slug": slug.current\n  }\n': COURSE_SLUGS_QUERY_RESULT;
     '\n  *[_type == "instructor"] | order(name asc) {\n    _id,\n    _type,\n    name,\n    "slug": slug.current,\n    expertise,\n    photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    "courseCount": count(*[_type == "course" && references(^._id)])\n  }\n': INSTRUCTOR_LIST_QUERY_RESULT;
     '\n  *[_type == "instructor" && slug.current == $slug][0] {\n    _id,\n    _type,\n    name,\n    "slug": slug.current,\n    expertise,\n    bio,\n    photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    "courses": *[_type == "course" && references(^._id)] | order(title asc) {\n      _id,\n      title,\n      "slug": slug.current,\n      summary,\n      level,\n      studentCount,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n    }\n  }\n': INSTRUCTOR_BY_SLUG_QUERY_RESULT;

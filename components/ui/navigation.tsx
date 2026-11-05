@@ -7,16 +7,19 @@ export function Navbar({
   active,
   actions,
   className,
+  padded = true,
 }: {
   links: Array<{ label: string; href: string }>;
   active?: string;
   actions?: React.ReactNode;
   className?: string;
+  padded?: boolean;
 }) {
   return (
     <nav
       className={cn(
-        "flex items-center justify-between gap-6 px-6 py-3",
+        "flex items-center justify-between gap-6 py-3",
+        padded && "px-6",
         className,
       )}
     >
