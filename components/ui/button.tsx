@@ -1,8 +1,11 @@
 import { cn } from "@/lib/cn";
 
+type ButtonVariant = "primary" | "secondary" | "tertiary" | "text";
+type ButtonSize = "default" | "md";
+
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "tertiary" | "text";
-  size?: "default" | "md";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 };
 
 const variantStyles = {
@@ -15,6 +18,26 @@ const variantStyles = {
   text: "text-primary-500 hover:text-primary-400 active:text-primary-500 disabled:text-neutral-300",
 } as const;
 
+const baseStyles =
+  "inline-flex h-11 items-center justify-center gap-2 rounded-md font-sans font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:hover:bg-inherit";
+
+export function buttonClassName({
+  variant = "primary",
+  size = "default",
+  className,
+}: {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+} = {}) {
+  return cn(
+    baseStyles,
+    size === "default" ? "px-4 text-sm" : "px-3 text-sm",
+    variantStyles[variant],
+    className,
+  );
+}
+
 export function Button({
   variant = "primary",
   size = "default",
@@ -23,12 +46,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={cn(
-        "inline-flex h-11 items-center justify-center gap-2 rounded-md font-sans font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:hover:bg-inherit",
-        size === "default" ? "px-4 text-sm" : "px-3 text-sm",
-        variantStyles[variant],
-        className,
-      )}
+      className={buttonClassName({ variant, size, className })}
       {...props}
     />
   );

@@ -1,6 +1,14 @@
-import { BottomDecoration, CoursesSection, Hero, HomeNavbar } from "@/components/home/sections";
+import {
+  BottomDecoration,
+  CoursesSection,
+  Hero,
+  HomeNavbar,
+} from "@/components/home/sections";
+import { getCourseList } from "@/sanity/queries/course";
 
-export default function Home() {
+export default async function Home() {
+  const courses = await getCourseList();
+
   return (
     <>
       <div className="relative bg-gradient-to-b from-primary-100/60 via-white/80 to-white">
@@ -11,7 +19,7 @@ export default function Home() {
         </div>
       </div>
       <main className="bg-gradient-to-b from-primary-100/50 via-primary-50 to-white">
-        <CoursesSection />
+        <CoursesSection courses={courses} />
         <BottomDecoration />
       </main>
     </>
