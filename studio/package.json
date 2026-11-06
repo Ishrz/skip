@@ -8,7 +8,9 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "typegen": "sanity schemas extract --force && sanity typegen generate",
-    "seed": "sanity documents create seed.json --replace"
+    "seed": "sanity documents create seed.json --replace",
+    "ingest:videos": "node scripts/ingest/ingest.mjs",
+    "ingest:import": "node scripts/ingest/import.mjs"
   },
   "dependencies": {
     "@sanity/icons": "^5.2.3",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "@types/react": "^19",
-    "typescript": "^5"
+    "typescript": "^5",
+    "youtube-transcript": "^1.3.1"
   }
 }
