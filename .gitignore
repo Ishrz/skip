@@ -26,6 +26,10 @@ studio/node_modules
 studio/.sanity
 studio/dist
 
+# offline video ingestion output
+studio/scripts/ingest/.cache/
+studio/scripts/ingest/videos.ndjson
+
 # folders
 /prompts
 /design

@@ -1,0 +1,5 @@
+# Authored chapter sidecars live here.
+#
+# Name a file `<provider>-<sanitized-id>.json`, for example `youtube-u57EnkQaUTY.json`, with:
+#   {"chapters": [{"startSeconds": 0, "label": "Introduction"}]}
+# A sidecar wins over chapters read from the provider.
