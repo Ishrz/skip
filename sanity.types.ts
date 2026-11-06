@@ -100,7 +100,7 @@ export type Lesson = {
   title?: string;
   slug?: Slug;
   videoUrl?: string;
-  poster?: {
+  thumbnail?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -585,7 +585,7 @@ export type INSTRUCTOR_SLUGS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries/lesson.ts
 // Variable: LESSON_BY_SLUG_QUERY
-// Query: *[_type == "lesson" && slug.current == $slug][0] {    _id,    _type,    title,    "slug": slug.current,    videoUrl,    duration,    freePreview,    studentCount,    poster {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },    notes,    keyPoints,    proTip,    resources[] {      _key,      _type,      type,      title,      description,      url    },    "course": *[_type == "course" && references(^._id)][0] {      _id,      title,      "slug": slug.current,      "category": category->{        _id,        title,        "slug": slug.current      },      "instructor": instructor->{        _id,        name,        "slug": slug.current,        photo {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions }      },      modules[] {        _key,        title,        "lessons": lessons[] {          _ref        }      }    }  }
+// Query: *[_type == "lesson" && slug.current == $slug][0] {    _id,    _type,    title,    "slug": slug.current,    videoUrl,    duration,    freePreview,    studentCount,    thumbnail {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },    notes,    keyPoints,    proTip,    resources[] {      _key,      _type,      type,      title,      description,      url    },    "course": *[_type == "course" && references(^._id)][0] {      _id,      title,      "slug": slug.current,      level,      coverImage {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },      "instructor": instructor->{        _id,        name,        "slug": slug.current      },      modules[] {        _key,        title,        summary,        "lessons": lessons[]->{          _id,          _type,          title,          "slug": slug.current,          duration,          freePreview        }      }    }  }
 export type LESSON_BY_SLUG_QUERY_RESULT = {
   _id: string;
   _type: "lesson";
@@ -595,7 +595,7 @@ export type LESSON_BY_SLUG_QUERY_RESULT = {
   duration: number | null;
   freePreview: boolean | null;
   studentCount: number | null;
-  poster: {
+  thumbnail: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -620,31 +620,33 @@ export type LESSON_BY_SLUG_QUERY_RESULT = {
     _id: string;
     title: string | null;
     slug: string | null;
-    category: {
-      _id: string;
-      title: string | null;
-      slug: string | null;
+    level: "advanced" | "beginner" | "intermediate" | null;
+    coverImage: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      lqip: string | null;
+      dimensions: SanityImageDimensions | null;
     } | null;
     instructor: {
       _id: string;
       name: string | null;
       slug: string | null;
-      photo: {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        alt?: string;
-        _type: "image";
-        lqip: string | null;
-        dimensions: SanityImageDimensions | null;
-      } | null;
     } | null;
     modules: Array<{
       _key: string;
       title: string | null;
+      summary: string | null;
       lessons: Array<{
-        _ref: string;
+        _id: string;
+        _type: "lesson";
+        title: string | null;
+        slug: string | null;
+        duration: number | null;
+        freePreview: boolean | null;
       }> | null;
     }> | null;
   } | null;
@@ -669,7 +671,7 @@ declare global {
     '\n  *[_type == "instructor"] | order(name asc) {\n    _id,\n    _type,\n    name,\n    "slug": slug.current,\n    expertise,\n    photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    "courseCount": count(*[_type == "course" && references(^._id)])\n  }\n': INSTRUCTOR_LIST_QUERY_RESULT;
     '\n  *[_type == "instructor" && slug.current == $slug][0] {\n    _id,\n    _type,\n    name,\n    "slug": slug.current,\n    expertise,\n    bio,\n    photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    "courses": *[_type == "course" && references(^._id)] | order(title asc) {\n      _id,\n      title,\n      "slug": slug.current,\n      summary,\n      level,\n      studentCount,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n    }\n  }\n': INSTRUCTOR_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "instructor" && defined(slug.current)] | order(name asc) {\n    "slug": slug.current\n  }\n': INSTRUCTOR_SLUGS_QUERY_RESULT;
-    '\n  *[_type == "lesson" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    poster { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    notes,\n    keyPoints,\n    proTip,\n    resources[] {\n      _key,\n      _type,\n      type,\n      title,\n      description,\n      url\n    },\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      title,\n      "slug": slug.current,\n      "category": category->{\n        _id,\n        title,\n        "slug": slug.current\n      },\n      "instructor": instructor->{\n        _id,\n        name,\n        "slug": slug.current,\n        photo { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n }\n      },\n      modules[] {\n        _key,\n        title,\n        "lessons": lessons[] {\n          _ref\n        }\n      }\n    }\n  }\n': LESSON_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "lesson" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    thumbnail { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    notes,\n    keyPoints,\n    proTip,\n    resources[] {\n      _key,\n      _type,\n      type,\n      title,\n      description,\n      url\n    },\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      title,\n      "slug": slug.current,\n      level,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n      "instructor": instructor->{\n        _id,\n        name,\n        "slug": slug.current\n      },\n      modules[] {\n        _key,\n        title,\n        summary,\n        "lessons": lessons[]->{\n          _id,\n          _type,\n          title,\n          "slug": slug.current,\n          duration,\n          freePreview\n        }\n      }\n    }\n  }\n': LESSON_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "lesson" && defined(slug.current)] | order(title asc) {\n    "slug": slug.current\n  }\n': LESSON_SLUGS_QUERY_RESULT;
   }
 }

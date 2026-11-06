@@ -37,6 +37,12 @@ export function formatStudentCount(value: number | null | undefined) {
   return `${rounded}k`;
 }
 
+export function formatExactCount(value: number | null | undefined) {
+  return new Intl.NumberFormat("en-US").format(
+    Math.max(0, Math.round(value ?? 0)),
+  );
+}
+
 export function formatLevel(value: string | null | undefined) {
   if (!value) {
     return "";
