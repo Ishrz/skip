@@ -1,4 +1,5 @@
 import {defineQuery} from 'next-sanity'
+import {cacheLife, cacheTag} from 'next/cache'
 
 import type {
   LESSON_BY_SLUG_QUERY_RESULT,
@@ -28,7 +29,7 @@ export const LESSON_BY_SLUG_QUERY = defineQuery(`
     duration,
     freePreview,
     studentCount,
-    poster { ${imageProjection} },
+    thumbnail { ${imageProjection} },
     notes,
     keyPoints,
     proTip,
@@ -44,22 +45,24 @@ export const LESSON_BY_SLUG_QUERY = defineQuery(`
       _id,
       title,
       "slug": slug.current,
-      "category": category->{
-        _id,
-        title,
-        "slug": slug.current
-      },
+      level,
+      coverImage { ${imageProjection} },
       "instructor": instructor->{
         _id,
         name,
-        "slug": slug.current,
-        photo { ${imageProjection} }
+        "slug": slug.current
       },
       modules[] {
         _key,
         title,
-        "lessons": lessons[] {
-          _ref
+        summary,
+        "lessons": lessons[]->{
+          _id,
+          _type,
+          title,
+          "slug": slug.current,
+          duration,
+          freePreview
         }
       }
     }
@@ -73,6 +76,10 @@ export const LESSON_SLUGS_QUERY = defineQuery(`
 `)
 
 export async function getLessonBySlug(slug: string) {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('lesson', `lesson:${slug}`, 'course')
+
   return sanityFetch<LESSON_BY_SLUG_QUERY_RESULT>({
     query: LESSON_BY_SLUG_QUERY,
     params: {slug},

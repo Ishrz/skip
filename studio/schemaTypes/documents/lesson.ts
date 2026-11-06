@@ -34,7 +34,7 @@ export const lesson = defineType({
         rule.required().uri({scheme: ['http', 'https']}),
     }),
     defineField({
-      name: 'poster',
+      name: 'thumbnail',
       type: 'image',
       group: 'details',
       options: {hotspot: true},
@@ -97,7 +97,7 @@ export const lesson = defineType({
     select: {
       title: 'title',
       freePreview: 'freePreview',
-      media: 'poster',
+      media: 'thumbnail',
     },
     prepare: ({title, freePreview, media}) => ({
       title,

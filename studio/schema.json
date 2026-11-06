@@ -537,7 +537,7 @@
         },
         "optional": true
       },
-      "poster": {
+      "thumbnail": {
         "type": "objectAttribute",
         "value": {
           "type": "object",
