@@ -15,6 +15,18 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type VideoChunk = {
+  _type: "videoChunk";
+  startSeconds?: number;
+  text?: string;
+};
+
+export type VideoChapter = {
+  _type: "videoChapter";
+  startSeconds?: number;
+  label?: string;
+};
+
 export type Link = {
   _type: "link";
   href?: string;
@@ -88,6 +100,28 @@ export type Module = {
     {
       _key: string;
     } & LessonReference
+  >;
+};
+
+export type Video = {
+  _id: string;
+  _type: "video";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  id?: string;
+  url?: string;
+  title?: string;
+  durationSeconds?: number;
+  chapters?: Array<
+    {
+      _key: string;
+    } & VideoChapter
+  >;
+  chunks?: Array<
+    {
+      _key: string;
+    } & VideoChunk
   >;
 };
 
@@ -321,6 +355,8 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | VideoChunk
+  | VideoChapter
   | Link
   | SanityImageAssetReference
   | RichText
@@ -328,6 +364,7 @@ export type AllSanitySchemaTypes =
   | LearningOutcome
   | LessonReference
   | Module
+  | Video
   | Lesson
   | SanityImageCrop
   | SanityImageHotspot
@@ -659,6 +696,73 @@ export type LESSON_SLUGS_QUERY_RESULT = Array<{
   slug: string | null;
 }>;
 
+// Source: ../sanity/queries/search.ts
+// Variable: SEARCH_LESSON_DETAILS_QUERY
+// Query: *[_type == "lesson" && _id in $ids] {    _id,    _type,    title,    "slug": slug.current,    videoUrl,    duration,    freePreview,    studentCount,    thumbnail {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },    keyPoints,    "notesText": pt::text(notes),    "course": *[_type == "course" && references(^._id)][0] {      _id,      _type,      title,      "slug": slug.current,      coverImage {   ...,  "lqip": asset->metadata.lqip,  "dimensions": asset->metadata.dimensions },      modules[] {        _key,        title,        "lessons": lessons[]->{ _id }      }    }  }
+export type SEARCH_LESSON_DETAILS_QUERY_RESULT = Array<{
+  _id: string;
+  _type: "lesson";
+  title: string | null;
+  slug: string | null;
+  videoUrl: string | null;
+  duration: number | null;
+  freePreview: boolean | null;
+  studentCount: number | null;
+  thumbnail: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    lqip: string | null;
+    dimensions: SanityImageDimensions | null;
+  } | null;
+  keyPoints: Array<string> | null;
+  notesText: string;
+  course: {
+    _id: string;
+    _type: "course";
+    title: string | null;
+    slug: string | null;
+    coverImage: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      lqip: string | null;
+      dimensions: SanityImageDimensions | null;
+    } | null;
+    modules: Array<{
+      _key: string;
+      title: string | null;
+      lessons: Array<{
+        _id: string;
+      }> | null;
+    }> | null;
+  } | null;
+}>;
+
+// Source: ../sanity/queries/search.ts
+// Variable: SEARCH_VIDEO_MOMENT_QUERY
+// Query: *[_type == "video" && url == $url][0] {    _id,    _type,    url,    durationSeconds,    chapters[] {      startSeconds,      label    },    "chunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {      startSeconds,      text    }  }
+export type SEARCH_VIDEO_MOMENT_QUERY_RESULT = {
+  _id: string;
+  _type: "video";
+  url: string | null;
+  durationSeconds: number | null;
+  chapters: Array<{
+    startSeconds: number | null;
+    label: string | null;
+  }> | null;
+  chunks: Array<{
+    startSeconds: number | null;
+    text: string | null;
+  }> | null;
+} | null;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
@@ -673,6 +777,8 @@ declare global {
     '\n  *[_type == "instructor" && defined(slug.current)] | order(name asc) {\n    "slug": slug.current\n  }\n': INSTRUCTOR_SLUGS_QUERY_RESULT;
     '\n  *[_type == "lesson" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    thumbnail { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    notes,\n    keyPoints,\n    proTip,\n    resources[] {\n      _key,\n      _type,\n      type,\n      title,\n      description,\n      url\n    },\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      title,\n      "slug": slug.current,\n      level,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n      "instructor": instructor->{\n        _id,\n        name,\n        "slug": slug.current\n      },\n      modules[] {\n        _key,\n        title,\n        summary,\n        "lessons": lessons[]->{\n          _id,\n          _type,\n          title,\n          "slug": slug.current,\n          duration,\n          freePreview\n        }\n      }\n    }\n  }\n': LESSON_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "lesson" && defined(slug.current)] | order(title asc) {\n    "slug": slug.current\n  }\n': LESSON_SLUGS_QUERY_RESULT;
+    '\n  *[_type == "lesson" && _id in $ids] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    thumbnail { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    keyPoints,\n    "notesText": pt::text(notes),\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      _type,\n      title,\n      "slug": slug.current,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n      modules[] {\n        _key,\n        title,\n        "lessons": lessons[]->{ _id }\n      }\n    }\n  }\n': SEARCH_LESSON_DETAILS_QUERY_RESULT;
+    '\n  *[_type == "video" && url == $url][0] {\n    _id,\n    _type,\n    url,\n    durationSeconds,\n    chapters[] {\n      startSeconds,\n      label\n    },\n    "chunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {\n      startSeconds,\n      text\n    }\n  }\n': SEARCH_VIDEO_MOMENT_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too
