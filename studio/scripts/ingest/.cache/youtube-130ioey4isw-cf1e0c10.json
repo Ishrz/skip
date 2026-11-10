@@ -1,0 +1,449 @@
+{
+  "title": "Principle of Least Privilege (POLP) Explained Simply",
+  "durationSeconds": 295,
+  "chapters": [
+    {
+      "startSeconds": 0,
+      "label": "What Is the Principle of Least Privilege (POLP)?"
+    },
+    {
+      "startSeconds": 71,
+      "label": "Business Benefits of Least Privilege Access"
+    },
+    {
+      "startSeconds": 163,
+      "label": "Least Privilege Best Practices: How to Implement POLP"
+    }
+  ],
+  "cues": [
+    {
+      "startSeconds": 5.16,
+      "text": "the principle of least privilege also"
+    },
+    {
+      "startSeconds": 7.6,
+      "text": "known as Access Control principle or the"
+    },
+    {
+      "startSeconds": 10.719,
+      "text": "principle of least Authority is a cyber"
+    },
+    {
+      "startSeconds": 13.4,
+      "text": "security approach and one of the Core"
+    },
+    {
+      "startSeconds": 16,
+      "text": "Concepts of zero trust security that has"
+    },
+    {
+      "startSeconds": 18.88,
+      "text": "become increasingly popular over the"
+    },
+    {
+      "startSeconds": 21.279,
+      "text": "last few years for many companies it is"
+    },
+    {
+      "startSeconds": 23.519,
+      "text": "now simply the default setting for"
+    },
+    {
+      "startSeconds": 26.359,
+      "text": "Effective modern security implementing"
+    },
+    {
+      "startSeconds": 28.88,
+      "text": "the principle of least privilege ensures"
+    },
+    {
+      "startSeconds": 31.56,
+      "text": "that individuals receive limited access"
+    },
+    {
+      "startSeconds": 34.04,
+      "text": "rights to networks systems and"
+    },
+    {
+      "startSeconds": 35.92,
+      "text": "applications by restricting user"
+    },
+    {
+      "startSeconds": 38.32,
+      "text": "privileges to the minimum required for"
+    },
+    {
+      "startSeconds": 40.84,
+      "text": "their tasks the risk of accidents errors"
+    },
+    {
+      "startSeconds": 43.8,
+      "text": "or unauthorized activities is greatly"
+    },
+    {
+      "startSeconds": 46.199,
+      "text": "reduced consider this should your"
+    },
+    {
+      "startSeconds": 48.32,
+      "text": "marketing managers have access to the"
+    },
+    {
+      "startSeconds": 50.96,
+      "text": "software development environment"
+    },
+    {
+      "startSeconds": 53.039,
+      "text": "absolutely not similarly should your"
+    },
+    {
+      "startSeconds": 55.239,
+      "text": "software developers Access Financial"
+    },
+    {
+      "startSeconds": 57.52,
+      "text": "information no by following the"
+    },
+    {
+      "startSeconds": 60.12,
+      "text": "principle of leas privilege each user"
+    },
+    {
+      "startSeconds": 62.359,
+      "text": "group is given only the permissions"
+    },
+    {
+      "startSeconds": 64.6,
+      "text": "needed for their essential job"
+    },
+    {
+      "startSeconds": 70.56,
+      "text": "functions by preventing users from"
+    },
+    {
+      "startSeconds": 73.36,
+      "text": "installing unauthorized applications the"
+    },
+    {
+      "startSeconds": 76.159,
+      "text": "principle of least privilege limits the"
+    },
+    {
+      "startSeconds": 78.56,
+      "text": "ability of malware to spread in addition"
+    },
+    {
+      "startSeconds": 81.439,
+      "text": "it restricts lateral Network movement"
+    },
+    {
+      "startSeconds": 83.96,
+      "text": "confining malware to the entry point and"
+    },
+    {
+      "startSeconds": 86.56,
+      "text": "preventing it from launching attacks"
+    },
+    {
+      "startSeconds": 88.92,
+      "text": "against other connect Ed devices by"
+    },
+    {
+      "startSeconds": 91.2,
+      "text": "protecting super user and administrator"
+    },
+    {
+      "startSeconds": 93.84,
+      "text": "privileges the principle of list"
+    },
+    {
+      "startSeconds": 95.88,
+      "text": "privilege diminishes the entry points a"
+    },
+    {
+      "startSeconds": 98.6,
+      "text": "malicious actors can use to access"
+    },
+    {
+      "startSeconds": 100.759,
+      "text": "sensitive data or carry out"
+    },
+    {
+      "startSeconds": 102.72,
+      "text": "sophisticated attacks restricting access"
+    },
+    {
+      "startSeconds": 105.36,
+      "text": "to sensitive information reduces the"
+    },
+    {
+      "startSeconds": 108.159,
+      "text": "likelihood of unauthorized data exposure"
+    },
+    {
+      "startSeconds": 111.2,
+      "text": "or leaks if an account is compromised"
+    },
+    {
+      "startSeconds": 113.719,
+      "text": "the damage is limited to the minimum"
+    },
+    {
+      "startSeconds": 116.119,
+      "text": "permissions assigned to that account"
+    },
+    {
+      "startSeconds": 118,
+      "text": "preventing widespread access limiting"
+    },
+    {
+      "startSeconds": 120.399,
+      "text": "privileges help prevent accidental"
+    },
+    {
+      "startSeconds": 123.24,
+      "text": "changes or deletions of critical system"
+    },
+    {
+      "startSeconds": 126.32,
+      "text": "files and data by users who do not need"
+    },
+    {
+      "startSeconds": 129.72,
+      "text": "such access with fewer permissions"
+    },
+    {
+      "startSeconds": 131.76,
+      "text": "granted it is easier to track an audit"
+    },
+    {
+      "startSeconds": 135,
+      "text": "user activities enhancing accountability"
+    },
+    {
+      "startSeconds": 138.16,
+      "text": "and oversight the principle of least"
+    },
+    {
+      "startSeconds": 140.56,
+      "text": "privilege helps meet regulatory"
+    },
+    {
+      "startSeconds": 142.92,
+      "text": "requirements and internal policies by"
+    },
+    {
+      "startSeconds": 145.56,
+      "text": "restricting privileged account access"
+    },
+    {
+      "startSeconds": 148.12,
+      "text": "providing a full audit TR of activities"
+    },
+    {
+      "startSeconds": 151.08,
+      "text": "for compliance verification by granting"
+    },
+    {
+      "startSeconds": 153.76,
+      "text": "only needed access system performance"
+    },
+    {
+      "startSeconds": 156.72,
+      "text": "and management can be optimized avoiding"
+    },
+    {
+      "startSeconds": 159.44,
+      "text": "unnecessary"
+    },
+    {
+      "startSeconds": 164,
+      "text": "complexity if you want to implement the"
+    },
+    {
+      "startSeconds": 167.08,
+      "text": "least privilege in your it environment"
+    },
+    {
+      "startSeconds": 169.959,
+      "text": "here are some best practices to get you"
+    },
+    {
+      "startSeconds": 172.72,
+      "text": "on the right track conduct a"
+    },
+    {
+      "startSeconds": 174.519,
+      "text": "comprehensive audit to identify all"
+    },
+    {
+      "startSeconds": 177.319,
+      "text": "privileged accounts including passwords"
+    },
+    {
+      "startSeconds": 179.879,
+      "text": "SSH Keys password hashes and access keys"
+    },
+    {
+      "startSeconds": 183.56,
+      "text": "this audit should cover on premises"
+    },
+    {
+      "startSeconds": 186.599,
+      "text": "systems Cloud environments devops setups"
+    },
+    {
+      "startSeconds": 189.72,
+      "text": "and endpoints eliminate any local admin"
+    },
+    {
+      "startSeconds": 193.239,
+      "text": "privileges that are not essential ensure"
+    },
+    {
+      "startSeconds": 195.959,
+      "text": "both human and nonhuman users only have"
+    },
+    {
+      "startSeconds": 199.239,
+      "text": "the minimum privileges necessary to"
+    },
+    {
+      "startSeconds": 201.799,
+      "text": "perform their tasks distinguish between"
+    },
+    {
+      "startSeconds": 204.48,
+      "text": "administrator accounts and standard user"
+    },
+    {
+      "startSeconds": 207.68,
+      "text": "accounts isolate privileged user"
+    },
+    {
+      "startSeconds": 210.4,
+      "text": "sessions to enhance security store the"
+    },
+    {
+      "startSeconds": 213.2,
+      "text": "credentials of privileged administrator"
+    },
+    {
+      "startSeconds": 215.799,
+      "text": "accounts in a digital Vault this step is"
+    },
+    {
+      "startSeconds": 218.76,
+      "text": "crucial for securing and managing these"
+    },
+    {
+      "startSeconds": 221.599,
+      "text": "accounts Implement a policy to rotate"
+    },
+    {
+      "startSeconds": 224.519,
+      "text": "all administrator passwords immediately"
+    },
+    {
+      "startSeconds": 227.319,
+      "text": "after each use this practice helps"
+    },
+    {
+      "startSeconds": 230.12,
+      "text": "invalidate any credentials that might"
+    },
+    {
+      "startSeconds": 232.519,
+      "text": "have been captured by malicious software"
+    },
+    {
+      "startSeconds": 235.159,
+      "text": "and mitigates the risk of attacks like"
+    },
+    {
+      "startSeconds": 237.84,
+      "text": "pass the hash constantly monitor"
+    },
+    {
+      "startSeconds": 240.2,
+      "text": "activities related to administrator"
+    },
+    {
+      "startSeconds": 242.64,
+      "text": "accounts set up systems to detect and"
+    },
+    {
+      "startSeconds": 245.599,
+      "text": "alert on any suspicious Behavior which"
+    },
+    {
+      "startSeconds": 248.48,
+      "text": "could indicate an ongoing Cyber attack"
+    },
+    {
+      "startSeconds": 251.2,
+      "text": "Implement just in time access elevation"
+    },
+    {
+      "startSeconds": 253.879,
+      "text": "allowing users to access privileged"
+    },
+    {
+      "startSeconds": 256.479,
+      "text": "accounts or run privileged commands only"
+    },
+    {
+      "startSeconds": 259.44,
+      "text": "temporarily and on an us needed basis"
+    },
+    {
+      "startSeconds": 262.72,
+      "text": "regularly review all Cloud identity and"
+    },
+    {
+      "startSeconds": 265.4,
+      "text": "access management permissions and"
+    },
+    {
+      "startSeconds": 267.28,
+      "text": "entitlements across us as and gcp"
+    },
+    {
+      "startSeconds": 271.56,
+      "text": "environments remove any excessive"
+    },
+    {
+      "startSeconds": 274,
+      "text": "permissions to ensure Cloud workloads"
+    },
+    {
+      "startSeconds": 276.8,
+      "text": "have only the necessary access thanks"
+    },
+    {
+      "startSeconds": 279.36,
+      "text": "for watching if you enjoyed this video"
+    },
+    {
+      "startSeconds": 282.32,
+      "text": "and found it useful I invite you to like"
+    },
+    {
+      "startSeconds": 285.52,
+      "text": "it share it with your connections and"
+    },
+    {
+      "startSeconds": 287.84,
+      "text": "subscribe to Heim Doll's YouTube channel"
+    },
+    {
+      "startSeconds": 290.08,
+      "text": "for more"
+    }
+  ],
+  "transcriptError": null,
+  "provider": "youtube",
+  "id": "130ioey4isw",
+  "url": "https://www.youtube.com/watch?v=130ioey4isw",
+  "fetchedAt": "2026-11-06T16:48:13.657Z"
+}
