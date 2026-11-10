@@ -747,7 +747,7 @@ export type SEARCH_LESSON_DETAILS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries/search.ts
 // Variable: SEARCH_VIDEO_MOMENT_QUERY
-// Query: *[_type == "video" && url == $url][0] {    _id,    _type,    url,    durationSeconds,    chapters[] {      startSeconds,      label    },    "chunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {      startSeconds,      text    }  }
+// Query: *[_type == "video" && url == $url][0] {    _id,    _type,    url,    durationSeconds,    chapters[] {      startSeconds,      label    },    "matchedChunks": chunks[      text match $patterns[0] ||      text match $patterns[1] ||      text match $patterns[2] ||      text match $patterns[3] ||      text match $patterns[4] ||      text match $patterns[5]    ] | order(startSeconds asc) [0...24] {      startSeconds,      text    },    "nearbyChunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {      startSeconds,      text    }  }
 export type SEARCH_VIDEO_MOMENT_QUERY_RESULT = {
   _id: string;
   _type: "video";
@@ -757,7 +757,11 @@ export type SEARCH_VIDEO_MOMENT_QUERY_RESULT = {
     startSeconds: number | null;
     label: string | null;
   }> | null;
-  chunks: Array<{
+  matchedChunks: Array<{
+    startSeconds: number | null;
+    text: string | null;
+  }> | null;
+  nearbyChunks: Array<{
     startSeconds: number | null;
     text: string | null;
   }> | null;
@@ -778,7 +782,7 @@ declare global {
     '\n  *[_type == "lesson" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    thumbnail { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    notes,\n    keyPoints,\n    proTip,\n    resources[] {\n      _key,\n      _type,\n      type,\n      title,\n      description,\n      url\n    },\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      title,\n      "slug": slug.current,\n      level,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n      "instructor": instructor->{\n        _id,\n        name,\n        "slug": slug.current\n      },\n      modules[] {\n        _key,\n        title,\n        summary,\n        "lessons": lessons[]->{\n          _id,\n          _type,\n          title,\n          "slug": slug.current,\n          duration,\n          freePreview\n        }\n      }\n    }\n  }\n': LESSON_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "lesson" && defined(slug.current)] | order(title asc) {\n    "slug": slug.current\n  }\n': LESSON_SLUGS_QUERY_RESULT;
     '\n  *[_type == "lesson" && _id in $ids] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    videoUrl,\n    duration,\n    freePreview,\n    studentCount,\n    thumbnail { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n    keyPoints,\n    "notesText": pt::text(notes),\n    "course": *[_type == "course" && references(^._id)][0] {\n      _id,\n      _type,\n      title,\n      "slug": slug.current,\n      coverImage { \n  ...,\n  "lqip": asset->metadata.lqip,\n  "dimensions": asset->metadata.dimensions\n },\n      modules[] {\n        _key,\n        title,\n        "lessons": lessons[]->{ _id }\n      }\n    }\n  }\n': SEARCH_LESSON_DETAILS_QUERY_RESULT;
-    '\n  *[_type == "video" && url == $url][0] {\n    _id,\n    _type,\n    url,\n    durationSeconds,\n    chapters[] {\n      startSeconds,\n      label\n    },\n    "chunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {\n      startSeconds,\n      text\n    }\n  }\n': SEARCH_VIDEO_MOMENT_QUERY_RESULT;
+    '\n  *[_type == "video" && url == $url][0] {\n    _id,\n    _type,\n    url,\n    durationSeconds,\n    chapters[] {\n      startSeconds,\n      label\n    },\n    "matchedChunks": chunks[\n      text match $patterns[0] ||\n      text match $patterns[1] ||\n      text match $patterns[2] ||\n      text match $patterns[3] ||\n      text match $patterns[4] ||\n      text match $patterns[5]\n    ] | order(startSeconds asc) [0...24] {\n      startSeconds,\n      text\n    },\n    "nearbyChunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {\n      startSeconds,\n      text\n    }\n  }\n': SEARCH_VIDEO_MOMENT_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

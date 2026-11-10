@@ -23,6 +23,7 @@ export type VideoSearchResult = SearchResultBase & {
   kind: "video";
   clipLengthSeconds: number;
   startSeconds: number;
+  matchSource: "chapter" | "transcript";
   href: string;
 };
 

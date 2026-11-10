@@ -51,7 +51,18 @@ export const SEARCH_VIDEO_MOMENT_QUERY = defineQuery(`
       startSeconds,
       label
     },
-    "chunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {
+    "matchedChunks": chunks[
+      text match $patterns[0] ||
+      text match $patterns[1] ||
+      text match $patterns[2] ||
+      text match $patterns[3] ||
+      text match $patterns[4] ||
+      text match $patterns[5]
+    ] | order(startSeconds asc) [0...24] {
+      startSeconds,
+      text
+    },
+    "nearbyChunks": chunks[startSeconds >= $from && startSeconds <= $to] | order(startSeconds asc) [0...8] {
       startSeconds,
       text
     }
@@ -70,11 +81,16 @@ export async function getSearchLessonDetails(ids: string[]) {
   });
 }
 
-export async function getSearchVideoMoment(url: string, startSeconds: number) {
+export async function getSearchVideoMoment(
+  url: string,
+  startSeconds: number,
+  patterns: string[],
+) {
   return sanityFetch<SEARCH_VIDEO_MOMENT_QUERY_RESULT>({
     query: SEARCH_VIDEO_MOMENT_QUERY,
     params: {
       url,
+      patterns,
       from: Math.max(0, Math.floor(startSeconds) - 30),
       to: Math.floor(startSeconds) + 30,
     },

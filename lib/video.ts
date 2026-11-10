@@ -60,7 +60,7 @@ export function getVideoSource(
     return id
       ? {
           provider: "vimeo",
-          embedUrl: `https://player.vimeo.com/video/${id}`,
+          embedUrl: `https://player.vimeo.com/video/${id}${url.search}`,
         }
       : null;
   }
@@ -70,9 +70,17 @@ export function getVideoSource(
     hostname.endsWith(".bunnycdn.com") ||
     hostname === "bunnycdn.com"
   ) {
+    const embedUrl = new URL(`${url.origin}${url.pathname}`);
+
+    for (const [key, value] of url.searchParams) {
+      if (key !== "autoplay" && key !== "t" && key !== "start") {
+        embedUrl.searchParams.set(key, value);
+      }
+    }
+
     return {
       provider: "bunny",
-      embedUrl: `${url.origin}${url.pathname}`,
+      embedUrl: embedUrl.toString(),
     };
   }
 
@@ -88,7 +96,16 @@ export function buildVideoEmbedUrl(
     : 0;
 
   if (source.provider === "vimeo") {
-    return `${source.embedUrl}?autoplay=1&api=1${start > 0 ? `#t=${start}s` : ""}`;
+    const url = new URL(source.embedUrl);
+
+    url.searchParams.set("autoplay", "1");
+    url.searchParams.set("api", "1");
+
+    if (start > 0) {
+      url.hash = `t=${start}s`;
+    }
+
+    return url.toString();
   }
 
   const url = new URL(source.embedUrl);
