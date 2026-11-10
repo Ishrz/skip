@@ -43,6 +43,20 @@ export function formatExactCount(value: number | null | undefined) {
   );
 }
 
+export function formatTimestamp(value: number | null | undefined) {
+  const totalSeconds = Math.max(0, Math.round(value ?? 0));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const padded = String(seconds).padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${padded}`;
+  }
+
+  return `${minutes}:${padded}`;
+}
+
 export function formatLevel(value: string | null | undefined) {
   if (!value) {
     return "";

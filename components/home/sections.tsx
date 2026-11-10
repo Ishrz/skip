@@ -159,10 +159,18 @@ export function Hero() {
           <ArrowRight className="size-5" />
         </Button>
       </div>
-      <div className="mx-auto mt-12 flex h-14 max-w-3xl items-center gap-3 rounded-lg border border-neutral-200 bg-white px-5 shadow-lg">
+      <form
+        action="/search"
+        method="get"
+        className="mx-auto mt-12 flex h-14 max-w-3xl items-center gap-3 rounded-lg border border-neutral-200 bg-white px-5 shadow-lg"
+      >
         <Search className="size-5 shrink-0 text-neutral-500" />
         <input
           type="search"
+          name="q"
+          required
+          minLength={2}
+          maxLength={200}
           placeholder="Ask anything about your learning..."
           aria-label="Search your learning"
           className="h-full w-full min-w-0 bg-transparent text-body-lg text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
@@ -170,7 +178,7 @@ export function Hero() {
         <kbd className="text-small shrink-0 rounded-sm border border-neutral-200 bg-neutral-50 px-2 py-1 text-neutral-500">
           ⌘ K
         </kbd>
-      </div>
+      </form>
     </section>
   );
 }
