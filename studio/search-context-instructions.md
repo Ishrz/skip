@@ -28,7 +28,9 @@ application turns your candidates into result cards.
   2. Only when no chapter matches, match transcript chunks:
      `chunks[text match "*cach*" || text match "*revalid*"][0...3]{startSeconds, text}`.
 - Return only real lesson `_id` values and real `startSeconds` values found in the data. Never
-  invent a document, title, timestamp, duration, count, or field.
+  invent a document, title, timestamp, duration, count, or field. Treat `startSeconds` as a hint:
+  the calling application re-resolves the best matching chapter first, then the best matching
+  transcript chunk, and snaps the result to that real start second.
 - If a search returns nothing, return no candidates for that result kind. Do not pad the result
   with unrelated lessons.
 

@@ -42,11 +42,13 @@ export function LessonVideoPlayer({
   const [startSeconds, setStartSeconds] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // The deep link carries the matched second as `?t=`. Read it when the learner
+  // presses play so the poster stays in the prerendered HTML and the URL is
+  // never needed during the server render.
   const handlePlay = () => {
     const params = new URLSearchParams(window.location.search);
-    const value = params.get("t") ?? params.get("start");
 
-    setStartSeconds(parseStartSeconds(value));
+    setStartSeconds(parseStartSeconds(params.get("t") ?? params.get("start")));
     setPlaying(true);
   };
 

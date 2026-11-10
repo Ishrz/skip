@@ -12,12 +12,16 @@ import {
 } from "@/sanity/queries/search";
 
 import type { ModelSearchResult } from "./schema";
-import type { SearchResponse, SearchResult } from "./types";
+import {
+  buildMatchPatterns,
+  resolveTimestamp,
+  type ResolvedTimestamp,
+} from "./timestamps";
+import type { SearchResponse, SearchResult, VideoSearchResult } from "./types";
 
 type LessonDetail = NonNullable<SEARCH_LESSON_DETAILS_QUERY_RESULT>[number];
 type VideoMoment = NonNullable<SEARCH_VIDEO_MOMENT_QUERY_RESULT>;
 type Chapter = NonNullable<VideoMoment["chapters"]>[number];
-type Chunk = NonNullable<VideoMoment["chunks"]>[number];
 
 const MAX_DESCRIPTION = 220;
 
@@ -55,21 +59,6 @@ function sortedChapters(video: VideoMoment) {
         typeof chapter?.startSeconds === "number",
     )
     .sort((a, b) => a.startSeconds - b.startSeconds);
-}
-
-function chapterAt(video: VideoMoment, startSeconds: number) {
-  const chapters = sortedChapters(video);
-  let current: Chapter | null = null;
-
-  for (const chapter of chapters) {
-    if (chapter.startSeconds > startSeconds) {
-      break;
-    }
-
-    current = chapter;
-  }
-
-  return current;
 }
 
 function clipLengthSeconds(
@@ -111,52 +100,18 @@ function lessonDescription(
 }
 
 function videoDescription(
-  video: VideoMoment,
-  startSeconds: number,
+  resolved: ResolvedTimestamp,
   fallback: string | undefined,
 ) {
-  const nearestChunk = [...(video.chunks ?? [])]
-    .filter(
-      (chunk): chunk is Chunk & { startSeconds: number; text: string } =>
-        typeof chunk?.startSeconds === "number" &&
-        typeof chunk?.text === "string",
-    )
-    .sort(
-      (a, b) =>
-        Math.abs(a.startSeconds - startSeconds) -
-        Math.abs(b.startSeconds - startSeconds),
-    )[0];
+  const primary =
+    resolved.source === "chapter" ? resolved.label : resolved.text;
+  const secondary =
+    resolved.source === "chapter" ? resolved.text : resolved.label;
 
-  const transcript = truncate(normalizeText(nearestChunk?.text));
-
-  if (transcript) {
-    return transcript;
-  }
-
-  const chapter = chapterAt(video, startSeconds);
-  const label = truncate(normalizeText(chapter?.label));
-
-  return label || truncate(normalizeText(fallback));
-}
-
-function hasMomentEvidence(
-  video: VideoMoment,
-  startSeconds: number,
-) {
-  const nearChapter = sortedChapters(video).some(
-    (chapter) => Math.abs(chapter.startSeconds - startSeconds) <= 2,
-  );
-
-  if (nearChapter) {
-    return true;
-  }
-
-  return (video.chunks ?? []).some(
-    (chunk) =>
-      typeof chunk?.startSeconds === "number" &&
-      typeof chunk?.text === "string" &&
-      chunk.text.trim().length > 0 &&
-      Math.abs(chunk.startSeconds - startSeconds) <= 5,
+  return (
+    truncate(normalizeText(primary)) ||
+    truncate(normalizeText(secondary)) ||
+    truncate(normalizeText(fallback))
   );
 }
 
@@ -223,6 +178,7 @@ export async function hydrateSearchResults(
   const lessonsById = new Map(lessons.map((lesson) => [lesson._id, lesson]));
 
   const videoMoments = new Map<number, VideoMoment | null>();
+  const patterns = buildMatchPatterns(query);
 
   await Promise.all(
     candidates.map(async (candidate, index) => {
@@ -243,6 +199,7 @@ export async function hydrateSearchResults(
           await getSearchVideoMoment(
             lesson.videoUrl,
             candidate.startSeconds,
+            patterns,
           ),
         );
       } catch (error) {
@@ -252,8 +209,15 @@ export async function hydrateSearchResults(
     }),
   );
 
-  const entries: SearchResult[] = [];
-  const seen = new Set<string>();
+  const entries = new Map<string, SearchResult>();
+
+  function addEntry(entry: SearchResult) {
+    const existing = entries.get(entry.id);
+
+    if (!existing || entry.relevance > existing.relevance) {
+      entries.set(entry.id, entry);
+    }
+  }
 
   candidates.forEach((candidate, index) => {
     const lesson = lessonsById.get(candidate.lessonId);
@@ -271,12 +235,7 @@ export async function hydrateSearchResults(
     if (candidate.kind === "lesson") {
       const key = `lesson:${context.lessonId}`;
 
-      if (seen.has(key)) {
-        return;
-      }
-
-      seen.add(key);
-      entries.push({
+      addEntry({
         ...context,
         kind: "lesson",
         id: key,
@@ -296,8 +255,21 @@ export async function hydrateSearchResults(
       return;
     }
 
-    const startSeconds = Math.max(0, Math.round(candidate.startSeconds));
+    const resolved = resolveTimestamp({
+      query,
+      hintSeconds: candidate.startSeconds,
+      chapters: video.chapters,
+      chunks: [
+        ...(video.matchedChunks ?? []),
+        ...(video.nearbyChunks ?? []),
+      ],
+    });
 
+    if (!resolved) {
+      return;
+    }
+
+    const startSeconds = resolved.startSeconds;
     const videoDuration = video.durationSeconds ?? 0;
 
     if (
@@ -308,25 +280,19 @@ export async function hydrateSearchResults(
       return;
     }
 
-    if (!hasMomentEvidence(video, startSeconds)) {
-      return;
-    }
-
     const key = `video:${context.lessonId}:${startSeconds}`;
+    const relevance = clampRelevance(
+      candidate.relevance + (resolved.source === "chapter" ? 4 : 0),
+    );
 
-    if (seen.has(key)) {
-      return;
-    }
-
-    seen.add(key);
-    entries.push({
+    const entry: VideoSearchResult = {
       ...context,
       kind: "video",
       id: key,
       rank: 0,
-      relevance: clampRelevance(candidate.relevance),
+      relevance,
       description:
-        videoDescription(video, startSeconds, candidate.description) ||
+        videoDescription(resolved, candidate.description) ||
         context.description,
       clipLengthSeconds: clipLengthSeconds(
         video,
@@ -334,18 +300,21 @@ export async function hydrateSearchResults(
         context.durationSeconds,
       ),
       startSeconds,
+      matchSource: resolved.source,
       href: `/lessons/${context.lessonSlug}?t=${startSeconds}`,
-    });
+    };
+
+    addEntry(entry);
   });
 
-  entries.sort(
+  const sorted = [...entries.values()].sort(
     (a, b) =>
       b.relevance - a.relevance ||
       (a.kind === b.kind ? 0 : a.kind === "video" ? -1 : 1) ||
       a.lessonTitle.localeCompare(b.lessonTitle),
   );
 
-  const results = entries.map((entry, index) => ({
+  const results = sorted.map((entry, index) => ({
     ...entry,
     rank: index + 1,
   }));
