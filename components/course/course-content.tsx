@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Lock } from "lucide-react";
 import type { COURSE_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
 import { buttonClassName } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -17,10 +17,12 @@ export function CourseContent({
   modules,
   moduleCount,
   totalDuration,
+  signedIn,
 }: {
   modules: CourseModule[];
   moduleCount: number;
   totalDuration: number | null;
+  signedIn: boolean;
 }) {
   const [showAll, setShowAll] = useState(false);
   const [openModules, setOpenModules] = useState<string[]>([]);
@@ -126,6 +128,12 @@ export function CourseContent({
                               {lesson.title}
                             </span>
                             <span className="shrink-0 text-small text-neutral-500">
+                              {!signedIn && !lesson.freePreview ? (
+                                <Lock
+                                  className="mr-1.5 inline size-3.5 align-[-2px] text-neutral-400"
+                                  aria-hidden="true"
+                                />
+                              ) : null}
                               {formatDuration(lesson.duration)}
                             </span>
                           </Link>

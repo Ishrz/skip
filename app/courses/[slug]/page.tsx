@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import {
   CourseBackdrop,
@@ -45,12 +46,19 @@ export default async function CourseRoute({
     notFound();
   }
 
+  const { userId } = await auth();
+  const signedIn = Boolean(userId);
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white pb-36">
+    <div
+      className={`relative min-h-screen overflow-hidden bg-white ${
+        signedIn ? "pb-36" : "pb-16"
+      }`}
+    >
       <CourseBackdrop />
       <CourseNavbar />
       <main className="relative z-10">
-        <CoursePage course={course} />
+        <CoursePage course={course} signedIn={signedIn} />
       </main>
     </div>
   );

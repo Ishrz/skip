@@ -1,7 +1,16 @@
+import { Suspense } from "react";
 import Link from "next/link";
+import { Show } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/cn";
+
+type NavLink = {
+  label: string;
+  href: string;
+  /** Only shown to signed-in learners. Display only, not access control. */
+  signedInOnly?: boolean;
+};
 
 function NavbarLink({
   label,
@@ -43,12 +52,15 @@ export function Navbar({
   className,
   padded = true,
 }: {
-  links: Array<{ label: string; href: string }>;
+  links: NavLink[];
   active?: string;
   actions?: React.ReactNode;
   className?: string;
   padded?: boolean;
 }) {
+  const publicLinks = links.filter((link) => !link.signedInOnly);
+  const privateLinks = links.filter((link) => link.signedInOnly);
+
   return (
     <nav
       className={cn(
@@ -62,7 +74,7 @@ export function Navbar({
       </Link>
 
       <div className="hidden items-center gap-6 md:flex">
-        {links.map((link) => (
+        {publicLinks.map((link) => (
           <NavbarLink
             key={link.href}
             label={link.label}
@@ -70,6 +82,20 @@ export function Navbar({
             isActive={active === link.label}
           />
         ))}
+        {privateLinks.length > 0 ? (
+          <Suspense fallback={null}>
+            <Show when="signed-in">
+              {privateLinks.map((link) => (
+                <NavbarLink
+                  key={link.href}
+                  label={link.label}
+                  href={link.href}
+                  isActive={active === link.label}
+                />
+              ))}
+            </Show>
+          </Suspense>
+        ) : null}
       </div>
 
       <div className="flex min-w-0 items-center gap-2 sm:gap-4">
@@ -83,24 +109,40 @@ export function Navbar({
             <X className="hidden size-5 group-open:block" aria-hidden="true" />
           </summary>
           <div className="absolute top-full right-0 z-50 mt-2 w-56 rounded-md border border-neutral-100 bg-white p-2 shadow-lg">
-            {links.map((link) => {
-              const isActive = active === link.label;
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-body flex rounded-sm px-3 py-2.5 font-medium transition-colors",
-                    isActive
-                      ? "bg-primary-100/70 text-primary-500"
-                      : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {publicLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-body flex rounded-sm px-3 py-2.5 font-medium transition-colors",
+                  active === link.label
+                    ? "bg-primary-100/70 text-primary-500"
+                    : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {privateLinks.length > 0 ? (
+              <Suspense fallback={null}>
+                <Show when="signed-in">
+                  {privateLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "text-body flex rounded-sm px-3 py-2.5 font-medium transition-colors",
+                        active === link.label
+                          ? "bg-primary-100/70 text-primary-500"
+                          : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </Show>
+              </Suspense>
+            ) : null}
           </div>
         </details>
       </div>

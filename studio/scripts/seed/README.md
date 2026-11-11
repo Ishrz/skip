@@ -22,6 +22,7 @@ Import authenticates through the Sanity CLI, so no write token is needed anywher
 | `resolve-videos.mjs` | Finds and verifies one unique YouTube video per lesson. |
 | `videos.json` | Committed cache of the resolved videos. Re-runs are offline. |
 | `build-ndjson.mjs` | Expands the spec into NDJSON, self-checking as it goes. |
+| `assets/covers/` | One cover per course, named `<course-slug>.<ext>`. Uploaded as real assets. |
 | `seed.ndjson` | Generated output. Do not hand-edit; rebuild instead. |
 
 ## Things worth knowing
@@ -34,8 +35,9 @@ Import authenticates through the Sanity CLI, so no write token is needed anywher
   with `math::sum` — add up to exactly the sum of their parts. Nothing stores an aggregate.
 - **`build-ndjson.mjs` re-implements the Studio's validation rules** and refuses to write a file
   that would fail them. Studio validation does not run on import, so this is the only gate.
-- **Images upload as real assets** at import time via `_sanityAsset`: course covers from Lorem
-  Picsum, lesson thumbnails from the video's own poster frame, instructor portraits from
-  randomuser.me. Nothing hotlinks at runtime.
+- **Images upload as real assets** at import time via `_sanityAsset`: course covers come from
+  `assets/covers/<course-slug>.<ext>` (supplied artwork, committed), lesson thumbnails from the
+  video's own poster frame, instructor portraits from randomuser.me. Nothing hotlinks at runtime.
+  A course without a cover file fails `seed:build` rather than falling back to a placeholder.
 - **Adding a lesson** means adding it to `content.mjs`, then running all three commands. The
   resolver only fetches what is missing from the cache.

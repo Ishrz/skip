@@ -15,7 +15,7 @@
  */
 
 import {createHash} from 'node:crypto'
-import {readFileSync, writeFileSync, existsSync} from 'node:fs'
+import {readFileSync, readdirSync, writeFileSync, existsSync} from 'node:fs'
 import {dirname, join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 
@@ -84,7 +84,24 @@ const bullet = (text, keyBase) => ({
  */
 const image = (url, alt) => ({_type: 'image', _sanityAsset: `image@${url}`, alt})
 
-const coverImageUrl = (slug) => `https://picsum.photos/seed/vertex-${slug}/1600/900`
+/*
+ * Course artwork is supplied, not generated. Every course slug must own one file in
+ * assets/covers (`<slug>.jpg`, `.png`, `.webp`, ...), imported as a real Sanity asset via the
+ * `file://` form of `_sanityAsset`. A missing file fails the build instead of shipping a random
+ * photo.
+ */
+const COVERS_DIR = join(HERE, 'assets', 'covers')
+const coverFiles = new Map(
+  readdirSync(COVERS_DIR)
+    .filter((name) => /\.(jpe?g|png|webp|avif)$/i.test(name))
+    .map((name) => [name.replace(/\.[^.]+$/, ''), name]),
+)
+const coverImageUrl = (slug) => {
+  const file = coverFiles.get(slug)
+  check(Boolean(file), `course ${slug}: no cover in assets/covers (expected ${slug}.jpg or .png)`)
+  // Relative to seed.ndjson: the CLI resolves `file://./` against the file's own directory.
+  return file ? `file://./assets/covers/${file}` : ''
+}
 const posterUrl = (videoId) => `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
 const portraitUrl = ({gender, id}) => `https://randomuser.me/api/portraits/${gender}/${id}.jpg`
 
@@ -205,8 +222,8 @@ for (const course of courses) {
         videoUrl: `https://www.youtube.com/watch?v=${video?.id ?? 'missing'}`,
         thumbnail: image(posterUrl(video?.id ?? 'missing'), `Video thumbnail for ${lesson.title}`),
         duration: video?.duration ?? 0,
-        // One free preview per course: the opening lesson.
-        freePreview: position === 0,
+        // Three free previews per course: the opening lessons.
+        freePreview: position < 3,
         studentCount,
         notes: [
           block(lesson.summary, 'normal', `${slug}-intro`),

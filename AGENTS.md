@@ -111,7 +111,7 @@ Build to these unless the user changes them. They exist because search quality a
 - Progress is tracked per learner: which lessons they have completed and where they left off in a lesson (a resume position). Surface it as completion marks and a resume affordance on the catalog, course, and lesson pages.
 - Product analytics is PostHog. Instrument the moments that show engagement: catalog and lesson views, a search performed, a video play and how far it is watched, and a lesson completed. The browser uses the public PostHog project key. Keep any private PostHog API key on the server.
 - Search is a full results page, not a compact widget and not a chatbox. It returns all ranked matches with a result count and a sort control, and it shows two kinds of result, video moments and lessons (section 11).
-- Some surfaces are presentational only, with no backend of their own: the My Learning page, the notifications bell, the lesson Notes tab, and the free preview badge. My Learning may read existing progress for display. Free preview is a label, not access control.
+- Some surfaces are presentational only, with no backend of their own: the My Learning page, the notifications bell, and the lesson Notes tab. My Learning may read existing progress for display. Free preview is real access control: a lesson marked free preview is open to signed-out visitors, every other lesson requires a signed-in Clerk user, enforced on the server (the browser never receives a locked lesson's video URL, notes, or resources).
 
 ---
 
