@@ -14,8 +14,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Vertex",
-  description: "A unified design language for Vertex learning platform.",
+  title: "Skip",
+  description: "A unified design language for Skip learning platform.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
