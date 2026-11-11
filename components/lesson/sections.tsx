@@ -451,23 +451,7 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
   return (
     <div className="mx-auto w-full max-w-6xl border-x border-neutral-100">
       <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="border-b border-neutral-100 lg:border-r lg:border-b-0">
-          <div className="lg:sticky lg:top-0 lg:max-h-screen lg:overflow-y-auto">
-            <LessonSidebar
-              courseTitle={courseTitle}
-              courseSlug={courseSlug}
-              coverUrl={coverUrl}
-              coverAlt={course?.coverImage?.alt ?? courseTitle}
-              instructorName={course?.instructor?.name ?? null}
-              progress={0}
-              currentModuleNumber={currentModuleNumber}
-              currentLessonId={lesson._id}
-              modules={sidebarModules}
-            />
-          </div>
-        </aside>
-
-        <main className="min-w-0 px-5 pt-6 pb-10 sm:px-8 lg:px-10 lg:pt-8">
+        <main className="min-w-0 px-5 pt-6 pb-10 sm:px-8 lg:col-start-2 lg:row-start-1 lg:px-10 lg:pt-8">
           <Breadcrumbs items={breadcrumbItems} />
 
           <div className="mt-6">
@@ -502,6 +486,22 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
             />
           </div>
         </main>
+
+        <aside className="border-t border-neutral-100 lg:col-start-1 lg:row-start-1 lg:border-t-0 lg:border-r">
+          <div className="lg:sticky lg:top-0 lg:max-h-screen lg:overflow-y-auto">
+            <LessonSidebar
+              courseTitle={courseTitle}
+              courseSlug={courseSlug}
+              coverUrl={coverUrl}
+              coverAlt={course?.coverImage?.alt ?? courseTitle}
+              instructorName={course?.instructor?.name ?? null}
+              progress={0}
+              currentModuleNumber={currentModuleNumber}
+              currentLessonId={lesson._id}
+              modules={sidebarModules}
+            />
+          </div>
+        </aside>
       </div>
 
       <LessonFooterNav previous={previous} next={next} />

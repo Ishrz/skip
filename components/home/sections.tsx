@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import type { COURSE_LIST_QUERY_RESULT } from "@/sanity.types";
 import { Navbar } from "@/components/ui/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClassName } from "@/components/ui/button";
 import { urlFor } from "@/sanity/lib/image";
 import { formatDuration, formatLevel } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -54,7 +54,9 @@ export function HomeNavbar({ className }: { className?: string }) {
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <Button variant="primary" size="md">Sign Up</Button>
+                  <Button variant="primary" size="md" className="max-sm:hidden">
+                    Sign Up
+                  </Button>
                 </SignUpButton>
               </Show>
               <Show when="signed-in">
@@ -143,21 +145,24 @@ export function HomeCourseCard({
 export function Hero() {
   return (
     <section className="relative px-6 pt-14 pb-20 text-center sm:pt-16">
-      <span className="bg-primary-100/80 inline-flex items-center rounded-2xl px-4 py-2 text-small font-medium tracking-[0.2em] text-primary-500 uppercase">
+      {/* <span className="bg-primary-100/80 inline-flex items-center rounded-2xl px-4 py-2 text-small font-medium tracking-[0.2em] text-primary-500 uppercase">
         Intelligent Learning
-      </span>
+      </span> */}
       <h1 className="text-hero mx-auto mt-6 max-w-3xl text-neutral-900 [text-shadow:0_0_28px_rgba(255,255,255,0.9)]">
         Search your learning in plain English.
       </h1>
       <p className="text-body-lg mx-auto mt-6 max-w-md text-neutral-500">
-        Skip understands what you want to learn and finds the exact lessons
+        SkiP, understands what you want to learn and finds the exact lessons
         across all your courses.
       </p>
       <div className="mt-10">
-        <Button className="h-12 px-6 text-base">
+        <Link
+          href="/courses"
+          className={buttonClassName({ className: "h-12 px-6 text-base" })}
+        >
           Explore Courses
           <ArrowRight className="size-5" />
-        </Button>
+        </Link>
       </div>
       <form
         action="/search"
@@ -220,7 +225,7 @@ export function CoursesSection({
         )}
         <div className="mt-12 flex items-center gap-6">
           <span aria-hidden="true" className="h-px flex-1 bg-neutral-200" />
-          <span className="text-body inline-flex shrink-0 items-center gap-2.5 text-neutral-500">
+          <span className="text-body inline-flex items-center gap-2.5 text-neutral-500">
             <Star className="size-5 text-primary-500" />
             New courses and lessons added every week.
           </span>

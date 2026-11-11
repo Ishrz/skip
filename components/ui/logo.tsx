@@ -21,7 +21,7 @@ export function Logo({
       </svg>
       {wordmark ? (
         <span className="text-heading-3 font-semibold tracking-tight text-neutral-900">
-          Skip
+          SkiP
         </span>
       ) : null}
     </span>
