@@ -21,13 +21,13 @@ export async function generateMetadata({
   const lesson = await getLessonBySlug(slug);
 
   if (!lesson?.title) {
-    return { title: "Lesson | Vertex" };
+    return { title: "Lesson | Skip" };
   }
 
   return {
-    title: `${lesson.title} | ${lesson.course?.title ?? "Vertex"}`,
+    title: `${lesson.title} | ${lesson.course?.title ?? "Skip"}`,
     description: lesson.course?.title
-      ? `${lesson.title}, a lesson from ${lesson.course.title} on Vertex.`
+      ? `${lesson.title}, a lesson from ${lesson.course.title} on Skip.`
       : undefined,
   };
 }

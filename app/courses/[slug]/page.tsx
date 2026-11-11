@@ -24,11 +24,11 @@ export async function generateMetadata({
   const course = await getCourseBySlug(slug);
 
   if (!course?.title) {
-    return { title: "Course | Vertex" };
+    return { title: "Course | Skip" };
   }
 
   return {
-    title: `${course.title} | Vertex`,
+    title: `${course.title} | Skip`,
     description: course.summary ?? undefined,
   };
 }

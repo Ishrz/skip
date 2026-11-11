@@ -8,7 +8,7 @@ import {structure} from './structure'
 
 export default defineConfig({
   name: 'vertex',
-  title: 'Vertex',
+  title: 'Skip',
   projectId,
   dataset,
   schema,

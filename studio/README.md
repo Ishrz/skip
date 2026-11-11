@@ -1,6 +1,6 @@
-# Vertex Studio
+# Skip Studio
 
-Standalone Sanity Studio for the Vertex content model. The Next.js app lives one level up and reads this dataset through a server-only client.
+Standalone Sanity Studio for the Skip content model. The Next.js app lives one level up and reads this dataset through a server-only client.
 
 ```bash
 npm install       # install Studio dependencies
