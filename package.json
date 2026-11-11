@@ -12,6 +12,7 @@
   "dependencies": {
     "@ai-sdk/google": "^4.0.112",
     "@ai-sdk/mcp": "^2.0.91",
+    "@ai-sdk/mistral": "^4.0.81",
     "@clerk/nextjs": "^7.9.22",
     "@sanity/image-url": "^2.1.1",
     "ai": "^7.0.163",

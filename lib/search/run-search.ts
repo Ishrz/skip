@@ -1,12 +1,6 @@
 import "server-only";
 
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import {
-  APICallError,
-  generateText,
-  RetryError,
-  stepCountIs,
-} from "ai";
+import { generateText, stepCountIs, type ToolSet } from "ai";
 
 import { hydrateSearchResults } from "./hydrate";
 import {
@@ -16,10 +10,17 @@ import {
   SearchConfigurationError,
 } from "./mcp";
 import { SEARCH_REPAIR_PROMPT, SEARCH_SYSTEM_PROMPT } from "./prompt";
+import {
+  isRateLimitFailure,
+  searchProviderAttempts,
+  type SearchProviderAttempt,
+} from "./providers";
 import { modelSearchSchema, type ModelSearchPayload } from "./schema";
 import type { SearchResponse } from "./types";
 
+/** The whole request, including a fallback attempt, must fit inside this. */
 const REQUEST_TIMEOUT_MS = 55_000;
+const MIN_ATTEMPT_MS = 5_000;
 
 export class SearchUpstreamError extends Error {
   constructor(message: string, options?: ErrorOptions) {
@@ -35,16 +36,11 @@ export class SearchRateLimitError extends Error {
   }
 }
 
-function isProviderRateLimit(error: unknown): boolean {
-  if (APICallError.isInstance(error)) {
-    return error.statusCode === 429;
+class InvalidSearchOutputError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidSearchOutputError";
   }
-
-  if (RetryError.isInstance(error)) {
-    return isProviderRateLimit(error.lastError);
-  }
-
-  return false;
 }
 
 function buildSystemPrompt(initialContext: string | null) {
@@ -137,8 +133,96 @@ function parsePayload(
   return { ok: true, payload: parsed.data };
 }
 
+function remainingSignal(deadline: number) {
+  return AbortSignal.timeout(Math.max(1_000, deadline - Date.now()));
+}
+
+function providerOptionsOf(attempt: SearchProviderAttempt) {
+  return attempt.providerOptions
+    ? { providerOptions: attempt.providerOptions }
+    : {};
+}
+
+async function requestPayload({
+  attempt,
+  tools,
+  instructions,
+  query,
+  deadline,
+}: {
+  attempt: SearchProviderAttempt;
+  tools: ToolSet;
+  instructions: string;
+  query: string;
+  deadline: number;
+}): Promise<ModelSearchPayload> {
+  const result = await generateText({
+    model: attempt.model,
+    instructions,
+    prompt: query,
+    tools,
+    stopWhen: stepCountIs(20),
+    temperature: 0,
+    topP: attempt.topP,
+    maxOutputTokens: attempt.maxOutputTokens,
+    maxRetries: attempt.maxRetries,
+    abortSignal: remainingSignal(deadline),
+    ...providerOptionsOf(attempt),
+  });
+
+  let parsed = parsePayload(result.text);
+
+  if (!parsed.ok) {
+    const repair = await generateText({
+      model: attempt.model,
+      instructions: SEARCH_REPAIR_PROMPT,
+      prompt: `Learner query: ${query}
+
+Invalid output:
+${result.text.slice(0, 8_000)}
+
+Validation error:
+${parsed.error}
+
+Return corrected JSON only.`,
+      temperature: 0,
+      topP: attempt.topP,
+      maxOutputTokens: attempt.maxOutputTokens,
+      maxRetries: attempt.maxRetries,
+      abortSignal: remainingSignal(deadline),
+      ...providerOptionsOf(attempt),
+    });
+
+    parsed = parsePayload(repair.text);
+  }
+
+  if (!parsed.ok) {
+    throw new InvalidSearchOutputError(parsed.error);
+  }
+
+  return parsed.payload;
+}
+
+function failureFor(error: unknown) {
+  if (isRateLimitFailure(error)) {
+    return new SearchRateLimitError("Search provider is rate limited.", {
+      cause: error,
+    });
+  }
+
+  if (error instanceof SearchUpstreamError) {
+    return error;
+  }
+
+  return new SearchUpstreamError("Search request failed.", {
+    cause: error,
+  });
+}
+
 export async function runSearch(query: string): Promise<SearchResponse> {
   const config = getSearchConfig();
+  // Starts before the MCP setup so the whole request stays inside the route budget.
+  const deadline = Date.now() + REQUEST_TIMEOUT_MS;
   let client: Awaited<ReturnType<typeof createSearchMcpClient>> | undefined;
 
   try {
@@ -154,55 +238,51 @@ export async function runSearch(query: string): Promise<SearchResponse> {
     delete (tools as Record<string, unknown>).schema_explorer;
     delete (tools as Record<string, unknown>).array_field_reader;
 
-    const google = createGoogleGenerativeAI({ apiKey: config.googleKey });
-    const model = google(config.model);
-    const result = await generateText({
-      model,
-      instructions: buildSystemPrompt(initialContext),
-      prompt: query,
-      tools,
-      stopWhen: stepCountIs(20),
-      temperature: 0,
-      maxOutputTokens: 8_000,
-      maxRetries: 1,
-      abortSignal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      providerOptions: {
-        google: { thinkingConfig: { thinkingBudget: 0 } },
-      },
-    });
+    const attempts = searchProviderAttempts(config);
+    const instructions = buildSystemPrompt(initialContext);
+    let payload: ModelSearchPayload | null = null;
+    let lastError: unknown = null;
 
-    let parsed = parsePayload(result.text);
+    for (const [index, attempt] of attempts.entries()) {
+      const remaining = deadline - Date.now();
 
-    if (!parsed.ok) {
-      const repair = await generateText({
-        model,
-        instructions: SEARCH_REPAIR_PROMPT,
-        prompt: `Learner query: ${query}
+      if (remaining < MIN_ATTEMPT_MS) {
+        break;
+      }
 
-Invalid output:
-${result.text.slice(0, 8_000)}
+      // Leave the rest of the deadline for a provider that can still answer.
+      const hasFallback = index < attempts.length - 1;
+      const attemptDeadline = hasFallback
+        ? Math.min(deadline, Date.now() + attempt.attemptTimeoutMs)
+        : deadline;
 
-Validation error:
-${parsed.error}
+      try {
+        payload = await requestPayload({
+          attempt,
+          tools,
+          instructions,
+          query,
+          deadline: attemptDeadline,
+        });
 
-Return corrected JSON only.`,
-        temperature: 0,
-        maxOutputTokens: 8_000,
-        maxRetries: 1,
-        abortSignal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        providerOptions: {
-          google: { thinkingConfig: { thinkingBudget: 0 } },
-        },
-      });
+        console.log(`[search] provider=${attempt.name}`);
+        break;
+      } catch (error) {
+        lastError = error;
 
-      parsed = parsePayload(repair.text);
+        if (error instanceof SearchConfigurationError) {
+          throw error;
+        }
+
+        console.error(`[search] provider=${attempt.name} failed`, error);
+      }
     }
 
-    if (!parsed.ok) {
-      throw new SearchUpstreamError("Search output could not be validated.");
+    if (!payload) {
+      throw failureFor(lastError);
     }
 
-    return hydrateSearchResults(query, parsed.payload.results);
+    return await hydrateSearchResults(query, payload.results);
   } catch (error) {
     if (
       error instanceof SearchConfigurationError ||
@@ -210,12 +290,6 @@ Return corrected JSON only.`,
       error instanceof SearchRateLimitError
     ) {
       throw error;
-    }
-
-    if (isProviderRateLimit(error)) {
-      throw new SearchRateLimitError("Search provider is rate limited.", {
-        cause: error,
-      });
     }
 
     throw new SearchUpstreamError("Search request failed.", {
