@@ -23,7 +23,7 @@ export function Navbar({
         className,
       )}
     >
-      <Link href="/" aria-label="Vertex home">
+      <Link href="/" aria-label="Skip home">
         <Logo />
       </Link>
       <div className="flex items-center gap-6">

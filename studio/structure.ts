@@ -7,7 +7,7 @@ import type {StructureResolver} from 'sanity/structure'
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Vertex')
+    .title('Skip')
     .items([
       S.documentTypeListItem('course').title('Courses').icon(BookIcon),
       S.documentTypeListItem('lesson').title('Lessons').icon(PlayIcon),

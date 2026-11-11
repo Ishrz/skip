@@ -70,7 +70,7 @@ export function Hero() {
       <Logo />
       <h1 className="text-display-2 mt-8 text-neutral-900">Design System</h1>
       <p className="text-body-lg mt-4 max-w-sm text-neutral-500">
-        A unified design language for Vertex learning platform. Clean, modern
+        A unified design language for Skip learning platform. Clean, modern
         and focused on clarity, consistency and intuitive learning
         experiences.
       </p>

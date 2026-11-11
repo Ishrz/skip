@@ -8,9 +8,9 @@ import {
 } from "@/components/search/sections";
 
 export const metadata: Metadata = {
-  title: "Search | Vertex",
+  title: "Search | Skip",
   description:
-    "Search every Vertex course for lessons and the exact video moments that teach them.",
+    "Search every Skip course for lessons and the exact video moments that teach them.",
 };
 
 type SearchParams = { [key: string]: string | string[] | undefined };

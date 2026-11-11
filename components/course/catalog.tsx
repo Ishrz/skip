@@ -102,7 +102,7 @@ export function CoursesCatalogPage({
               All Courses
             </h1>
             <p className="text-body-lg mt-3 text-neutral-500">
-              Browse every course in the Vertex library and start learning
+              Browse every course in the Skip library and start learning
               where you left off.
             </p>
           </div>

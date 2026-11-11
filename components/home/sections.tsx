@@ -150,7 +150,7 @@ export function Hero() {
         Search your learning in plain English.
       </h1>
       <p className="text-body-lg mx-auto mt-6 max-w-md text-neutral-500">
-        Vertex understands what you want to learn and finds the exact lessons
+        Skip understands what you want to learn and finds the exact lessons
         across all your courses.
       </p>
       <div className="mt-10">

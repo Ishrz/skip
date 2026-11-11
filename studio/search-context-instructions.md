@@ -1,6 +1,6 @@
-# Vertex Search — Context Instructions
+# Skip Search — Context Instructions
 
-You search the Vertex course catalog. Return candidate lessons and video moments; the calling
+You search the Skip course catalog. Return candidate lessons and video moments; the calling
 application turns your candidates into result cards.
 
 ## Schema notes
