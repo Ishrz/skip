@@ -15,8 +15,12 @@ let cachedContext: CachedContext | null = null;
 export type SearchConfig = {
   mcpUrl: string;
   organizationToken: string;
-  googleKey: string;
-  model: string;
+  googleKey: string | null;
+  googleModel: string;
+  /** A second Google model on the same key; null when disabled. */
+  googleFallbackModel: string | null;
+  mistralKey: string | null;
+  mistralModel: string;
 };
 
 export class SearchConfigurationError extends Error {
@@ -29,9 +33,10 @@ export class SearchConfigurationError extends Error {
 export function getSearchConfig(): SearchConfig {
   const mcpUrl = process.env.SANITY_CONTEXT_MCP_URL;
   const organizationToken = process.env.SANITY_ORGANIZATION_TOKEN;
-  const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || null;
+  const mistralKey = process.env.MISTRAL_API_KEY || null;
 
-  if (!mcpUrl || !organizationToken || !googleKey) {
+  if (!mcpUrl || !organizationToken || (!googleKey && !mistralKey)) {
     throw new SearchConfigurationError();
   }
 
@@ -39,7 +44,19 @@ export function getSearchConfig(): SearchConfig {
     mcpUrl,
     organizationToken,
     googleKey,
-    model: process.env.GOOGLE_MODEL ?? "gemini-3.1-flash-lite",
+    googleModel: process.env.GOOGLE_MODEL ?? "gemini-3.1-flash-lite",
+    // A second model on the same key absorbs the model-level 503s Gemini
+    // returns under load. Set GOOGLE_FALLBACK_MODEL to an empty value to turn
+    // the extra attempt off.
+    googleFallbackModel:
+      process.env.GOOGLE_FALLBACK_MODEL === undefined
+        ? "gemini-3.5-flash"
+        : process.env.GOOGLE_FALLBACK_MODEL.trim() || null,
+    mistralKey,
+    // Ministral 14B is the best free-tier fit: 40k TPM, but only 2 requests per
+    // minute. Small and Medium reject a free key outright; Large 4 allows 50
+    // requests per minute but only 20k TPM, which a multi-step search exceeds.
+    mistralModel: process.env.MISTRAL_MODEL ?? "ministral-14b-latest",
   };
 }
 
