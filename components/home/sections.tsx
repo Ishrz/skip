@@ -155,9 +155,9 @@ export function Hero() {
       <h1 className="text-hero mx-auto mt-6 max-w-3xl text-neutral-900 [text-shadow:0_0_28px_rgba(255,255,255,0.9)]">
         Search your learning in plain English.
       </h1>
-      <p className="text-body-lg mx-auto mt-6 max-w-md text-neutral-500">
-        SkiP, understands what you want to learn and finds the exact lessons
-        across all your courses.
+      <p className="text-body-lg mx-auto mt-6 max-w-xl text-neutral-500">
+        Ask a question in plain English. Skip finds the exact lesson, the
+        moment, and the second in the video that answers it.
       </p>
       <div className="mt-10">
         <Link

@@ -27,6 +27,16 @@ const sortOptions = [
   { label: "Lessons first", value: "lesson" },
 ] satisfies Array<{ label: string; value: SortOption }>;
 
+class SearchRequestError extends Error {
+  readonly code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "SearchRequestError";
+    this.code = code;
+  }
+}
+
 async function fetchSearch(query: string) {
   const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
     cache: "no-store",
@@ -41,8 +51,15 @@ async function fetchSearch(query: string) {
       typeof body.error === "string"
         ? body.error
         : "Search is temporarily unavailable.";
+    const code =
+      body &&
+      typeof body === "object" &&
+      "code" in body &&
+      typeof body.code === "string"
+        ? body.code
+        : undefined;
 
-    throw new Error(message);
+    throw new SearchRequestError(message, code);
   }
 
   return body as SearchResponse;
@@ -84,6 +101,7 @@ export function SearchPage({ initialQuery }: { initialQuery: string }) {
   );
   const [data, setData] = useState<SearchResponse | null>(null);
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string | undefined>(undefined);
   const [hint, setHint] = useState("");
   const [sort, setSort] = useState<SortOption>("relevance");
   const [reloadKey, setReloadKey] = useState(0);
@@ -113,6 +131,9 @@ export function SearchPage({ initialQuery }: { initialQuery: string }) {
           cause instanceof Error
             ? cause.message
             : "Search is temporarily unavailable.",
+        );
+        setErrorCode(
+          cause instanceof SearchRequestError ? cause.code : undefined,
         );
         setStatus("error");
       });
@@ -166,13 +187,16 @@ export function SearchPage({ initialQuery }: { initialQuery: string }) {
           courseCount === 1 ? "course" : "courses"
         }`
       : status === "error"
-        ? "Search is temporarily unavailable."
+        ? errorCode === "model_quota"
+          ? "Search is paused while the free model quota resets."
+          : "Search is temporarily unavailable."
         : "Searching lessons and video moments...";
 
   function retry() {
     setStatus("loading");
     setData(null);
     setError("");
+    setErrorCode(undefined);
     setReloadKey((key) => key + 1);
   }
 
@@ -261,7 +285,7 @@ export function SearchPage({ initialQuery }: { initialQuery: string }) {
       {hasQuery && status === "loading" ? <SearchSkeleton /> : null}
 
       {hasQuery && status === "error" ? (
-        <SearchError message={error} onRetry={retry} />
+        <SearchError code={errorCode} message={error} onRetry={retry} />
       ) : null}
 
       {hasQuery && status === "success" && data ? (

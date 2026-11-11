@@ -26,9 +26,9 @@ function clientKey(request: NextRequest) {
   );
 }
 
-function jsonError(message: string, status: number) {
+function jsonError(message: string, status: number, code: string) {
   return Response.json(
-    { error: message },
+    { error: message, code },
     { status, headers: { "Cache-Control": "no-store" } },
   );
 }
@@ -42,11 +42,16 @@ export async function GET(request: NextRequest) {
     return jsonError(
       "Enter a search query between 2 and 200 characters.",
       400,
+      "invalid_query",
     );
   }
 
   if (!checkRateLimit(clientKey(request))) {
-    return jsonError("Too many searches. Try again in a minute.", 429);
+    return jsonError(
+      "Too many searches. Try again in a minute.",
+      429,
+      "too_many_requests",
+    );
   }
 
   try {
@@ -57,23 +62,28 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof SearchConfigurationError) {
-      return jsonError("Search is not configured.", 503);
+      return jsonError("Search is not configured.", 503, "not_configured");
     }
 
     if (error instanceof SearchRateLimitError) {
       console.error("[search]", error.cause ?? error);
       return jsonError(
-        "Search is busy right now. Try again in a moment.",
+        "The free AI model that powers search is in high demand right now. Search is working — please try again in a few minutes.",
         429,
+        "model_quota",
       );
     }
 
     if (error instanceof SearchUpstreamError) {
       console.error("[search]", error.cause ?? error);
-      return jsonError("Search is temporarily unavailable.", 502);
+      return jsonError(
+        "Search is temporarily unavailable.",
+        502,
+        "unavailable",
+      );
     }
 
     console.error("[search]", error);
-    return jsonError("Search is temporarily unavailable.", 502);
+    return jsonError("Search is temporarily unavailable.", 502, "unavailable");
   }
 }
