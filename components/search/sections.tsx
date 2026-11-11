@@ -15,6 +15,7 @@ import {
   PlayCircle,
   Search,
   SearchX,
+  Timer,
   User,
 } from "lucide-react";
 import type {
@@ -354,26 +355,44 @@ export function SearchEmpty({ query }: { query: string }) {
 
 export function SearchError({
   message,
+  code,
   onRetry,
 }: {
   message: string;
+  code?: string;
   onRetry: () => void;
 }) {
+  const quotaPaused = code === "model_quota";
+
   return (
     <section
       role="alert"
       className="mt-10 rounded-md border border-neutral-100 bg-white p-10 text-center shadow-sm"
     >
-      <AlertCircle
-        className="mx-auto size-8 text-primary-500"
-        aria-hidden="true"
-      />
+      {quotaPaused ? (
+        <Timer
+          className="mx-auto size-8 text-primary-500"
+          aria-hidden="true"
+        />
+      ) : (
+        <AlertCircle
+          className="mx-auto size-8 text-primary-500"
+          aria-hidden="true"
+        />
+      )}
       <h2 className="mt-4 text-heading-2 font-semibold text-neutral-900">
-        Search is temporarily unavailable
+        {quotaPaused
+          ? "Search is paused for a moment"
+          : "Search is temporarily unavailable"}
       </h2>
       <p className="text-body mx-auto mt-2 max-w-md text-neutral-500">
         {message}
       </p>
+      {quotaPaused ? (
+        <p className="text-small mt-3 font-medium tracking-wide text-neutral-400 uppercase">
+          Free-tier limit
+        </p>
+      ) : null}
       <button
         type="button"
         onClick={onRetry}
