@@ -35,6 +35,7 @@ import {
 } from "./sidebar";
 import { LessonTabs } from "./tabs";
 import { LessonVideoPlayer } from "./video-player";
+import { LockedLessonCard } from "./locked-card";
 
 type Lesson = NonNullable<LESSON_BY_SLUG_QUERY_RESULT>;
 type Course = NonNullable<Lesson["course"]>;
@@ -98,6 +99,7 @@ function getSidebarModules(modules: CourseModule[]): LessonSidebarModule[] {
               title: lesson.title ?? "Untitled lesson",
               slug: lesson.slug,
               duration: lesson.duration,
+              freePreview: lesson.freePreview,
             },
           ]
         : [],
@@ -305,6 +307,33 @@ function LessonContent({
   );
 }
 
+function LockedLessonContent({ keyPoints }: { keyPoints: string[] }) {
+  if (keyPoints.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="max-w-3xl">
+      <h2 className="text-body-lg font-semibold text-neutral-900">
+        In this lesson you will:
+      </h2>
+      <ul className="mt-4 space-y-3">
+        {keyPoints.map((point) => (
+          <li key={point} className="flex items-start gap-3">
+            <CheckCircle2
+              className="mt-0.5 size-5 shrink-0 text-primary-500"
+              aria-hidden="true"
+            />
+            <span className="text-body-lg leading-7 text-neutral-700">
+              {point}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function LessonFooterNav({
   previous,
   next,
@@ -391,7 +420,15 @@ function LessonFooterNav({
   );
 }
 
-export function LessonPage({ lesson }: { lesson: Lesson }) {
+export function LessonPage({
+  lesson,
+  signedIn,
+  locked,
+}: {
+  lesson: Lesson;
+  signedIn: boolean;
+  locked: boolean;
+}) {
   const course = lesson.course;
   const modules = course?.modules ?? [];
   const position = getLessonPosition(course, lesson._id);
@@ -432,7 +469,9 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
       : null;
   const posterAlt =
     lesson.thumbnail?.alt ?? `Video thumbnail for ${title}`;
-  const videoSource = getVideoSource(lesson.videoUrl);
+  // Never build a provider embed URL for a locked lesson. It would be dead
+  // data, and the point of the gate is that it never reaches the client.
+  const videoSource = locked ? null : getVideoSource(lesson.videoUrl);
 
   const breadcrumbItems: Array<{ label: string; href?: string }> = [
     { label: "All Courses", href: "/courses" },
@@ -463,27 +502,39 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
           </div>
 
           <div className="mt-8">
-            <LessonVideoPlayer
-              key={lesson._id}
-              title={title}
-              posterUrl={posterUrl}
-              posterAlt={posterAlt}
-              source={videoSource}
-            />
+            {locked ? (
+              <LockedLessonCard
+                title={title}
+                courseTitle={courseTitle}
+                posterUrl={posterUrl}
+              />
+            ) : (
+              <LessonVideoPlayer
+                key={lesson._id}
+                title={title}
+                posterUrl={posterUrl}
+                posterAlt={posterAlt}
+                source={videoSource}
+              />
+            )}
           </div>
 
           <div className="mt-8">
-            <LessonTabs
-              content={
-                <LessonContent
-                  overview={overview}
-                  keyPoints={keyPoints}
-                  proTip={lesson.proTip}
-                  resources={resources}
-                />
-              }
-              notes={<LessonNotes value={lesson.notes} />}
-            />
+            {locked ? (
+              <LockedLessonContent keyPoints={keyPoints} />
+            ) : (
+              <LessonTabs
+                content={
+                  <LessonContent
+                    overview={overview}
+                    keyPoints={keyPoints}
+                    proTip={lesson.proTip}
+                    resources={resources}
+                  />
+                }
+                notes={<LessonNotes value={lesson.notes} />}
+              />
+            )}
           </div>
         </main>
 
@@ -495,6 +546,7 @@ export function LessonPage({ lesson }: { lesson: Lesson }) {
               coverUrl={coverUrl}
               coverAlt={course?.coverImage?.alt ?? courseTitle}
               instructorName={course?.instructor?.name ?? null}
+              signedIn={signedIn}
               progress={0}
               currentModuleNumber={currentModuleNumber}
               currentLessonId={lesson._id}

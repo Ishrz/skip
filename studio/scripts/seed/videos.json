@@ -783,13 +783,6 @@
     "duration": 1112,
     "query": "cross site scripting xss explained prevention"
   },
-  "practical-web-security-sql-injection": {
-    "id": "AOXMDbc11AE",
-    "title": "How Do Parameterized Queries Prevent SQL Injection?",
-    "channel": "Server Logic Simplified",
-    "duration": 254,
-    "query": "sql injection explained prevention parameterized queries"
-  },
   "practical-web-security-csrf": {
     "id": "80S8h5hEwTY",
     "title": "Your App Is NOT Secure If You Don’t Use CSRF Tokens",
@@ -838,5 +831,12 @@
     "channel": "Aikido Security",
     "duration": 824,
     "query": "software supply chain security dependencies explained"
+  },
+  "practical-web-security-sql-injection": {
+    "id": "WONbg6ZjiXk",
+    "title": "SQL Injection Prevention: Security Simplified",
+    "channel": "Vickie Li Dev",
+    "duration": 584,
+    "query": "sql injection explained prevention parameterized queries"
   }
 }

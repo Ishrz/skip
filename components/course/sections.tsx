@@ -53,7 +53,7 @@ const outcomeIcons: Record<string, LucideIcon> = {
   shield: ShieldCheck,
 };
 
-export function CourseNavbar() {
+export function CourseNavbar({ active = "Courses" }: { active?: string }) {
   return (
     <header className="border-b border-neutral-100 bg-white">
       <div className="mx-auto w-full max-w-6xl">
@@ -62,9 +62,13 @@ export function CourseNavbar() {
           className="min-h-20 px-4 sm:px-6 lg:px-8"
           links={[
             { label: "Courses", href: "/courses" },
-            { label: "My Learning", href: "/my-learning" },
+            {
+              label: "My Learning",
+              href: "/my-learning",
+              signedInOnly: true,
+            },
           ]}
-          active="Courses"
+          active={active}
           actions={
             <>
               <button
@@ -300,7 +304,13 @@ export function CourseProgressCard({
   );
 }
 
-export function CoursePage({ course }: { course: Course }) {
+export function CoursePage({
+  course,
+  signedIn,
+}: {
+  course: Course;
+  signedIn: boolean;
+}) {
   const title = course.title ?? "Course";
   const firstLesson = (course.modules ?? [])
     .flatMap((module) => module.lessons ?? [])
@@ -330,9 +340,12 @@ export function CoursePage({ course }: { course: Course }) {
           modules={course.modules ?? []}
           moduleCount={course.moduleCount ?? course.modules?.length ?? 0}
           totalDuration={course.totalDuration}
+          signedIn={signedIn}
         />
       </div>
-      <CourseProgressCard progress={progress} lessonHref={lessonHref} />
+      {signedIn ? (
+        <CourseProgressCard progress={progress} lessonHref={lessonHref} />
+      ) : null}
     </>
   );
 }

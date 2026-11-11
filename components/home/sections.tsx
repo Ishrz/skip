@@ -26,7 +26,11 @@ export function HomeNavbar({ className }: { className?: string }) {
         className="rounded-lg border border-neutral-100 bg-white shadow-sm"
         links={[
           { label: "Courses", href: "/courses" },
-          { label: "My Learning", href: "/my-learning" },
+          {
+            label: "My Learning",
+            href: "/my-learning",
+            signedInOnly: true,
+          },
         ]}
         active="Courses"
         actions={

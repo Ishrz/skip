@@ -38,7 +38,11 @@ export function SearchNavbar() {
           className="min-h-20"
           links={[
             { label: "Courses", href: "/courses" },
-            { label: "My Learning", href: "/my-learning" },
+            {
+              label: "My Learning",
+              href: "/my-learning",
+              signedInOnly: true,
+            },
           ]}
           active="Courses"
           actions={

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ChevronDown, Play } from "lucide-react";
+import { ArrowLeft, ChevronDown, Lock, Play } from "lucide-react";
 import { ProgressBar } from "@/components/ui/progress";
 import { cn } from "@/lib/cn";
 import { formatDuration } from "@/lib/format";
@@ -13,6 +13,7 @@ export type LessonSidebarLesson = {
   title: string;
   slug: string | null;
   duration: number | null;
+  freePreview: boolean | null;
 };
 
 export type LessonSidebarModule = {
@@ -29,6 +30,7 @@ export function LessonSidebar({
   coverUrl,
   coverAlt,
   instructorName,
+  signedIn,
   progress,
   currentModuleNumber,
   currentLessonId,
@@ -39,6 +41,7 @@ export function LessonSidebar({
   coverUrl: string | null;
   coverAlt: string;
   instructorName: string | null;
+  signedIn: boolean;
   progress: number;
   currentModuleNumber: number;
   currentLessonId: string;
@@ -99,10 +102,18 @@ export function LessonSidebar({
         </div>
 
         <div className="mt-4">
-          <p className="text-small font-medium text-neutral-700">
-            {progress}% complete
-          </p>
-          <ProgressBar value={progress} className="mt-2" />
+          {signedIn ? (
+            <>
+              <p className="text-small font-medium text-neutral-700">
+                {progress}% complete
+              </p>
+              <ProgressBar value={progress} className="mt-2" />
+            </>
+          ) : (
+            <p className="text-small text-neutral-500">
+              Sign in to track your progress
+            </p>
+          )}
         </div>
 
         <button
@@ -231,8 +242,16 @@ export function LessonSidebar({
                                 />
                               </span>
                             ) : (
-                              <span className="text-small shrink-0 text-neutral-500">
-                                {formatDuration(lesson.duration)}
+                              <span className="flex shrink-0 items-center gap-1.5">
+                                {!signedIn && !lesson.freePreview ? (
+                                  <Lock
+                                    className="size-3.5 text-neutral-400"
+                                    aria-hidden="true"
+                                  />
+                                ) : null}
+                                <span className="text-small text-neutral-500">
+                                  {formatDuration(lesson.duration)}
+                                </span>
                               </span>
                             )}
                           </Link>

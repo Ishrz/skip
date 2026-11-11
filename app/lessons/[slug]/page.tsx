@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { CourseBackdrop, CourseNavbar } from "@/components/course/sections";
 import { LessonPage } from "@/components/lesson/sections";
@@ -44,12 +45,16 @@ export default async function LessonRoute({
     notFound();
   }
 
+  const { userId } = await auth();
+  const signedIn = Boolean(userId);
+  const locked = !signedIn && !lesson.freePreview;
+
   return (
     <div className="relative min-h-screen overflow-x-clip bg-white pb-6">
       <CourseBackdrop />
       <CourseNavbar />
       <main className="relative z-10 px-4 sm:px-6 lg:px-8">
-        <LessonPage lesson={lesson} />
+        <LessonPage lesson={lesson} signedIn={signedIn} locked={locked} />
       </main>
     </div>
   );
