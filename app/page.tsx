@@ -4,6 +4,7 @@ import {
   Hero,
   HomeNavbar,
 } from "@/components/home/sections";
+import { HowItWorks } from "@/components/home/how-it-works";
 import { getCourseList } from "@/sanity/queries/course";
 
 export default async function Home() {
@@ -20,6 +21,7 @@ export default async function Home() {
       </div>
       <main className="bg-gradient-to-b from-primary-100/50 via-primary-50 to-white">
         <CoursesSection courses={courses} />
+        <HowItWorks />
         <BottomDecoration />
       </main>
     </>
