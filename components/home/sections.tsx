@@ -8,7 +8,6 @@ import {
   Bell,
   Clock,
   FileText,
-  Search,
   Star,
   User,
 } from "lucide-react";
@@ -18,6 +17,7 @@ import { Button, buttonClassName } from "@/components/ui/button";
 import { urlFor } from "@/sanity/lib/image";
 import { formatDuration, formatLevel } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { HomeSearch } from "@/components/home/search-demo";
 
 export function HomeNavbar({ className }: { className?: string }) {
   return (
@@ -168,26 +168,7 @@ export function Hero() {
           <ArrowRight className="size-5" />
         </Link>
       </div>
-      <form
-        action="/search"
-        method="get"
-        className="mx-auto mt-12 flex h-14 max-w-3xl items-center gap-3 rounded-lg border border-neutral-200 bg-white px-5 shadow-lg"
-      >
-        <Search className="size-5 shrink-0 text-neutral-500" />
-        <input
-          type="search"
-          name="q"
-          required
-          minLength={2}
-          maxLength={200}
-          placeholder="Ask anything about your learning..."
-          aria-label="Search your learning"
-          className="h-full w-full min-w-0 bg-transparent text-body-lg text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
-        />
-        <kbd className="text-small shrink-0 rounded-sm border border-neutral-200 bg-neutral-50 px-2 py-1 text-neutral-500">
-          ⌘ K
-        </kbd>
-      </form>
+      <HomeSearch />
     </section>
   );
 }
